@@ -1,7 +1,7 @@
 "use client";
 
 import { useLang } from "./LangProvider";
-import { lighthouseTitlesEl, lighthouseFixesEn, lighthouseFixesEl } from "@/lib/i18n";
+import { lighthouseTitlesEl, lighthouseFixesEn, lighthouseFixesEl, lighthouseDescriptionsEn, lighthouseDescriptionsEl } from "@/lib/i18n";
 
 interface Issue {
   category: string;
@@ -24,7 +24,11 @@ export function IssueCard({ issue }: { issue: Issue }) {
   const fix = lang === "el"
     ? lighthouseFixesEl[issue.title]
     : lighthouseFixesEn[issue.title];
+  const desc = lang === "el"
+    ? lighthouseDescriptionsEl[issue.title]
+    : lighthouseDescriptionsEn[issue.title];
   const fixLabel = lang === "el" ? "Πώς να το διορθώσεις:" : "How to fix:";
+  const descLabel = lang === "el" ? "Τι σημαίνει:" : "What this means:";
 
   return (
     <div className={`rounded-xl border p-4 ${cfg.bg} ${cfg.border}`}>
@@ -35,6 +39,12 @@ export function IssueCard({ issue }: { issue: Issue }) {
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-slate-100 text-sm">{title}</p>
           <span className="text-slate-500 text-xs mt-0.5 inline-block">{issue.category}</span>
+          {desc && (
+            <div className="mt-2">
+              <p className="text-xs font-semibold text-slate-400 mb-0.5">{descLabel}</p>
+              <p className="text-xs text-slate-300 leading-relaxed">{desc}</p>
+            </div>
+          )}
           {fix && (
             <div className="mt-2.5 bg-slate-950/50 border border-slate-700/50 rounded-lg px-3 py-2">
               <p className="text-xs font-semibold text-slate-400 mb-1">{fixLabel}</p>
