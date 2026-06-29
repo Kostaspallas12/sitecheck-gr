@@ -105,6 +105,7 @@ export interface ScanResultDoc {
   securityHeaders?: string;
   sslData?: string;
   issues?: string;
+  extendedAudit?: string;
 }
 
 export async function createScanResult(data: Omit<ScanResultDoc, never>) {

@@ -45,6 +45,33 @@ type T = {
   returnHome: string
   scoreLabels: Record<string, string>
   privacyLink: string
+  techStackTitle: string
+  cookiesTitle: string
+  cookieNoIssues: string
+  cookiesNone: string
+  exposedFilesTitle: string
+  exposedFilesNone: string
+  infoLeaksTitle: string
+  infoLeaksNone: string
+  extSecurityTitle: string
+  seoExtrasTitle: string
+  compressionLabel: string
+  redirectHttpsLabel: string
+  directoryListingLabel: string
+  sitemapLabel: string
+  securityTxtLabel: string
+  openGraphLabel: string
+  twitterCardLabel: string
+  schemaOrgLabel: string
+  corsLabel: string
+  corsRiskyNote: string
+  enabled: string
+  notEnabled: string
+  found: string
+  notFound: string
+  present: string
+  missing: string
+  risky: string
 }
 
 export const translations: Record<Lang, T> = {
@@ -110,6 +137,33 @@ export const translations: Record<Lang, T> = {
       "Security": "Security",
     },
     privacyLink: "Privacy Policy",
+    techStackTitle: "Technology Stack",
+    cookiesTitle: "Cookie Security",
+    cookieNoIssues: "No issues",
+    cookiesNone: "No cookies were set by this page",
+    exposedFilesTitle: "Sensitive Files",
+    exposedFilesNone: "No sensitive files exposed",
+    infoLeaksTitle: "Information Exposure",
+    infoLeaksNone: "No information leaks detected",
+    extSecurityTitle: "Extended Security",
+    seoExtrasTitle: "SEO Extras",
+    compressionLabel: "Compression",
+    redirectHttpsLabel: "HTTP → HTTPS Redirect",
+    directoryListingLabel: "Directory Listing",
+    sitemapLabel: "sitemap.xml",
+    securityTxtLabel: "security.txt",
+    openGraphLabel: "Open Graph Tags",
+    twitterCardLabel: "Twitter Card",
+    schemaOrgLabel: "Schema.org",
+    corsLabel: "CORS Policy",
+    corsRiskyNote: "Wildcard (*) allows any origin — risky if credentials are involved",
+    enabled: "Enabled",
+    notEnabled: "Not enabled",
+    found: "Found",
+    notFound: "Not found",
+    present: "Present",
+    missing: "Missing",
+    risky: "Risky",
   },
   el: {
     badge: "Δωρεάν εργαλείο",
@@ -173,6 +227,33 @@ export const translations: Record<Lang, T> = {
       "Security": "Ασφάλεια",
     },
     privacyLink: "Πολιτική Απορρήτου",
+    techStackTitle: "Τεχνολογίες",
+    cookiesTitle: "Ασφάλεια Cookies",
+    cookieNoIssues: "Χωρίς πρόβλημα",
+    cookiesNone: "Δεν βρέθηκαν cookies σε αυτή τη σελίδα",
+    exposedFilesTitle: "Εκτεθειμένα Αρχεία",
+    exposedFilesNone: "Δεν βρέθηκαν εκτεθειμένα αρχεία",
+    infoLeaksTitle: "Διαρροή Πληροφοριών",
+    infoLeaksNone: "Δεν εντοπίστηκαν διαρροές πληροφοριών",
+    extSecurityTitle: "Εκτεταμένη Ασφάλεια",
+    seoExtrasTitle: "SEO Λεπτομέρειες",
+    compressionLabel: "Συμπίεση",
+    redirectHttpsLabel: "Ανακατεύθυνση HTTP → HTTPS",
+    directoryListingLabel: "Εμφάνιση Καταλόγου",
+    sitemapLabel: "sitemap.xml",
+    securityTxtLabel: "security.txt",
+    openGraphLabel: "Open Graph Tags",
+    twitterCardLabel: "Twitter Card",
+    schemaOrgLabel: "Schema.org",
+    corsLabel: "CORS Policy",
+    corsRiskyNote: "Wildcard (*) επιτρέπει οποιοδήποτε origin — επικίνδυνο αν εμπλέκονται credentials",
+    enabled: "Ενεργή",
+    notEnabled: "Ανενεργή",
+    found: "Βρέθηκε",
+    notFound: "Δεν βρέθηκε",
+    present: "Υπάρχει",
+    missing: "Λείπει",
+    risky: "Επικίνδυνο",
   },
 }
 

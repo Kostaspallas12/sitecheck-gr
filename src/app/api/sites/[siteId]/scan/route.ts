@@ -47,6 +47,7 @@ export async function POST(
         securityHeaders: JSON.stringify(result.securityHeaders),
         sslData: JSON.stringify(result.ssl),
         issues: JSON.stringify(result.lighthouse.issues),
+        extendedAudit: JSON.stringify(result.extendedAudit),
       });
       await updateScan(scan.id, { status: "DONE", finishedAt: new Date() });
     })
