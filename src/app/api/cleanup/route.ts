@@ -4,7 +4,8 @@ import { Timestamp } from "firebase-admin/firestore";
 
 // Καλείται από cron job κάθε 2 μήνες
 export async function GET(req: NextRequest) {
-  const secret = req.nextUrl.searchParams.get("secret");
+  const auth = req.headers.get("authorization");
+  const secret = auth?.startsWith("Bearer ") ? auth.slice(7) : null;
   if (secret !== process.env.CLEANUP_SECRET) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
