@@ -3,40 +3,17 @@
 import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useState, useEffect } from "react";
 
-const instructions: Record<string, (token: string, domain: string) => React.ReactNode> = {
-  dns: (token, domain) => (
-    <div className="space-y-3 text-sm">
-      <p className="text-slate-300">Πρόσθεσε το παρακάτω <strong>TXT record</strong> στο DNS του domain σου:</p>
-      <div className="bg-slate-900 border border-slate-700 rounded-xl p-4 font-mono text-xs space-y-2">
-        <div className="flex justify-between"><span className="text-slate-500">Type:</span><span className="text-indigo-400">TXT</span></div>
-        <div className="flex justify-between"><span className="text-slate-500">Name:</span><span className="text-indigo-400">@  (ή {domain})</span></div>
-        <div className="flex justify-between gap-4"><span className="text-slate-500 shrink-0">Value:</span><span className="text-green-400 break-all">site-verify={token}</span></div>
-        <div className="flex justify-between"><span className="text-slate-500">TTL:</span><span className="text-indigo-400">3600</span></div>
-      </div>
-      <p className="text-slate-500 text-xs">Οι DNS αλλαγές μπορεί να πάρουν έως 48 ώρες να διαδοθούν.</p>
-    </div>
-  ),
-  meta: (token) => (
+function MetaTagInstructions({ token }: { token: string }) {
+  return (
     <div className="space-y-3 text-sm">
       <p className="text-slate-300">Πρόσθεσε το παρακάτω meta tag μέσα στο <code className="text-indigo-400">&lt;head&gt;</code> της αρχικής σελίδας:</p>
       <div className="bg-slate-900 border border-slate-700 rounded-xl p-4 font-mono text-xs text-green-400 break-all">
         {`<meta name="site-verify" content="site-verify=${token}" />`}
       </div>
+      <p className="text-slate-500 text-xs">Αφού το προσθέσεις και κάνεις deploy, πάτα "Επαλήθευση".</p>
     </div>
-  ),
-  file: (token, domain) => (
-    <div className="space-y-3 text-sm">
-      <p className="text-slate-300">Ανέβασε ένα αρχείο στη διεύθυνση:</p>
-      <div className="bg-slate-900 border border-slate-700 rounded-xl p-4 font-mono text-xs text-green-400 break-all">
-        https://{domain}/.well-known/site-verify-{token}.txt
-      </div>
-      <p className="text-slate-300">Το περιεχόμενο του αρχείου πρέπει να είναι ακριβώς:</p>
-      <div className="bg-slate-900 border border-slate-700 rounded-xl p-4 font-mono text-xs text-indigo-400">
-        {token}
-      </div>
-    </div>
-  ),
-};
+  );
+}
 
 function VerifyContent() {
   const params = useSearchParams();
@@ -44,7 +21,6 @@ function VerifyContent() {
   const siteId = params.get("siteId") ?? "";
 
   const [token, setToken] = useState("");
-  const [method, setMethod] = useState("dns");
   const [domain, setDomain] = useState("");
   const [ready, setReady] = useState(false);
 
@@ -57,9 +33,8 @@ function VerifyContent() {
     try {
       const stored = sessionStorage.getItem(`site:${siteId}`);
       if (stored) {
-        const { token: t, method: m, domain: d } = JSON.parse(stored);
+        const { token: t, domain: d } = JSON.parse(stored);
         setToken(t);
-        setMethod(m);
         setDomain(d);
       }
     } catch {
@@ -125,7 +100,7 @@ function VerifyContent() {
         </div>
 
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-6">
-          {instructions[method]?.(token, domain)}
+          <MetaTagInstructions token={token} />
         </div>
 
         {verified ? (

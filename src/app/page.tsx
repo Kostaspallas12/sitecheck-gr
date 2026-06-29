@@ -7,7 +7,7 @@ export default function HomePage() {
   const router = useRouter();
   const [domain, setDomain] = useState("");
   const [email, setEmail] = useState("");
-  const [method, setMethod] = useState<"dns" | "meta" | "file">("dns");
+  const method = "meta";;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -78,26 +78,6 @@ export default function HomePage() {
             required
             className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition"
           />
-        </div>
-
-        <div>
-          <label className="block text-sm text-slate-400 mb-2">Μέθοδος επαλήθευσης ιδιοκτησίας</label>
-          <div className="grid grid-cols-3 gap-2">
-            {(["dns", "meta", "file"] as const).map((m) => (
-              <button
-                key={m}
-                type="button"
-                onClick={() => setMethod(m)}
-                className={`py-2.5 rounded-xl text-sm font-medium border transition ${
-                  method === m
-                    ? "bg-indigo-600 border-indigo-500 text-white"
-                    : "bg-slate-900 border-slate-700 text-slate-400 hover:border-slate-500"
-                }`}
-              >
-                {m === "dns" ? "DNS TXT" : m === "meta" ? "Meta Tag" : "Αρχείο"}
-              </button>
-            ))}
-          </div>
         </div>
 
         {error && (

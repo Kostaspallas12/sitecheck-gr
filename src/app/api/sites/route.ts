@@ -11,7 +11,8 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { domain, email, verifyMethod = "dns" } = await req.json();
+    const { domain, email } = await req.json();
+    const verifyMethod = "meta";
 
     if (!domain || !email) {
       return NextResponse.json({ error: "domain και email είναι υποχρεωτικά" }, { status: 400 });
@@ -19,10 +20,6 @@ export async function POST(req: NextRequest) {
 
     if (!EMAIL_RE.test(email)) {
       return NextResponse.json({ error: "Μη έγκυρη διεύθυνση email" }, { status: 400 });
-    }
-
-    if (!["dns", "meta", "file"].includes(verifyMethod)) {
-      return NextResponse.json({ error: "Μη έγκυρη μέθοδος επαλήθευσης" }, { status: 400 });
     }
 
     const hostname = new URL(`https://${domain.replace(/^https?:\/\//, "")}`).hostname;
