@@ -1,3 +1,7 @@
+"use client";
+
+import { useLang } from "./LangProvider";
+
 interface Issue {
   category: string;
   title: string;
@@ -6,18 +10,21 @@ interface Issue {
 }
 
 const severityConfig = {
-  error:   { label: "Κρίσιμο",     bg: "bg-red-500/10",    text: "text-red-400",    border: "border-red-500/20" },
-  warning: { label: "Προσοχή",     bg: "bg-orange-500/10", text: "text-orange-400", border: "border-orange-500/20" },
-  info:    { label: "Βελτίωση",    bg: "bg-blue-500/10",   text: "text-blue-400",   border: "border-blue-500/20" },
+  error:   { en: "Critical",     el: "Κρίσιμο",  bg: "bg-red-500/10",    text: "text-red-400",    border: "border-red-500/20" },
+  warning: { en: "Warning",      el: "Προσοχή",   bg: "bg-orange-500/10", text: "text-orange-400", border: "border-orange-500/20" },
+  info:    { en: "Improvement",  el: "Βελτίωση",  bg: "bg-blue-500/10",   text: "text-blue-400",   border: "border-blue-500/20" },
 };
 
 export function IssueCard({ issue }: { issue: Issue }) {
+  const lang = useLang();
   const cfg = severityConfig[issue.severity];
+  const label = lang === "el" ? cfg.el : cfg.en;
+
   return (
     <div className={`rounded-xl border p-4 ${cfg.bg} ${cfg.border}`}>
       <div className="flex items-start gap-3">
         <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${cfg.bg} ${cfg.text} border ${cfg.border} shrink-0 mt-0.5`}>
-          {cfg.label}
+          {label}
         </span>
         <div>
           <p className="font-semibold text-slate-100 text-sm">{issue.title}</p>
