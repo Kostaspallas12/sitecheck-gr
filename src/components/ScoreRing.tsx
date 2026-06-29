@@ -8,6 +8,14 @@ interface Props {
   size?: number;
 }
 
+const labelMap: Record<string, string> = {
+  "Performance": "Απόδοση",
+  "SEO": "SEO",
+  "Accessibility": "Προσβασιμότητα",
+  "Best Practices": "Βέλτιστες Πρακτικές",
+  "Security": "Ασφάλεια",
+};
+
 function getColor(score: number) {
   if (score >= 90) return "#22c55e";
   if (score >= 50) return "#f97316";
@@ -24,9 +32,7 @@ export function ScoreRing({ score, label, size = 96 }: Props) {
   const [displayScore, setDisplayScore] = useState(0);
 
   useEffect(() => {
-    const raf = requestAnimationFrame(() => {
-      setOffset(targetOffset);
-    });
+    const raf = requestAnimationFrame(() => setOffset(targetOffset));
 
     let start: number | null = null;
     const duration = 1000;
@@ -45,10 +51,7 @@ export function ScoreRing({ score, label, size = 96 }: Props) {
   return (
     <div className="flex flex-col items-center gap-1">
       <svg width={size} height={size} className="-rotate-90">
-        <circle
-          cx={size / 2} cy={size / 2} r={radius}
-          fill="none" stroke="#1e293b" strokeWidth={10}
-        />
+        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#1e293b" strokeWidth={10} />
         <circle
           cx={size / 2} cy={size / 2} r={radius}
           fill="none" stroke={color} strokeWidth={10}
@@ -61,7 +64,9 @@ export function ScoreRing({ score, label, size = 96 }: Props) {
       <span className="text-2xl font-bold -mt-[68px] mb-[52px]" style={{ color }}>
         {displayScore}
       </span>
-      <span className="text-xs text-slate-400 font-medium uppercase tracking-wide">{label}</span>
+      <span className="text-xs text-slate-400 font-medium text-center leading-tight max-w-[90px]">
+        {labelMap[label] ?? label}
+      </span>
     </div>
   );
 }

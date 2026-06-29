@@ -51,6 +51,10 @@ export default async function ResultsPage({ params, searchParams }: PageProps) {
     { label: "Security", value: r.securityScore ?? 0 },
   ];
 
+  const overallScore = Math.round(scores.reduce((sum, s) => sum + s.value, 0) / scores.length);
+  const overallColor = overallScore >= 90 ? "text-green-400" : overallScore >= 50 ? "text-orange-400" : "text-red-400";
+  const overallLabel = overallScore >= 90 ? "Εξαιρετικό" : overallScore >= 70 ? "Καλό" : overallScore >= 50 ? "Μέτριο" : "Χρειάζεται βελτίωση";
+
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100 px-4 py-12">
       <div className="max-w-4xl mx-auto space-y-10">
@@ -64,7 +68,14 @@ export default async function ResultsPage({ params, searchParams }: PageProps) {
         </div>
 
         <section className="bg-slate-900 border border-slate-800 rounded-2xl p-8">
-          <h2 className="text-lg font-semibold mb-8">Συνολικές βαθμολογίες</h2>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+            <h2 className="text-lg font-semibold">Βαθμολογίες ανάλυσης</h2>
+            <div className="flex items-center gap-3 bg-slate-800/60 border border-slate-700/60 rounded-xl px-5 py-3">
+              <span className="text-slate-400 text-sm">Συνολική βαθμολογία</span>
+              <span className={`text-3xl font-extrabold ${overallColor}`}>{overallScore}</span>
+              <span className={`text-xs font-semibold ${overallColor}`}>{overallLabel}</span>
+            </div>
+          </div>
           <div className="flex flex-wrap justify-around gap-8">
             {scores.map((s) => (
               <ScoreRing key={s.label} score={s.value} label={s.label} />
