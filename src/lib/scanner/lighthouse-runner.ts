@@ -1,3 +1,4 @@
+import puppeteer from "puppeteer";
 import lighthouse from "lighthouse";
 import { assertPublicDomain } from "@/lib/security/ssrf-guard";
 
@@ -19,25 +20,12 @@ export interface LighthouseIssue {
 export async function runLighthouse(url: string): Promise<LighthouseScores> {
   await assertPublicDomain(new URL(url).hostname);
 
-  const isProduction = process.env.NODE_ENV === "production";
   let browser;
-
   try {
-    if (isProduction) {
-      const chromium = await import("@sparticuz/chromium");
-      const puppeteer = await import("puppeteer-core");
-      browser = await puppeteer.default.launch({
-        args: chromium.default.args,
-        executablePath: await chromium.default.executablePath(),
-        headless: true,
-      });
-    } else {
-      const puppeteer = await import("puppeteer");
-      browser = await puppeteer.default.launch({
-        headless: true,
-        args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
-      });
-    }
+    browser = await puppeteer.launch({
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
+    });
 
     const port = parseInt(new URL(browser.wsEndpoint()).port);
 
@@ -51,17 +39,14 @@ export async function runLighthouse(url: string): Promise<LighthouseScores> {
     if (!result?.lhr) throw new Error("Lighthouse δεν επέστρεψε αποτελέσματα");
 
     const { categories, audits } = result.lhr;
-
-    const score = (cat: string) =>
-      Math.round((categories[cat]?.score ?? 0) * 100);
+    const score = (cat: string) => Math.round((categories[cat]?.score ?? 0) * 100);
 
     const issues: LighthouseIssue[] = [];
 
     const pushIssues = (auditIds: string[], category: string) => {
       for (const id of auditIds) {
         const audit = audits[id];
-        if (!audit) continue;
-        if (audit.score === null || audit.score === 1) continue;
+        if (!audit || audit.score === null || audit.score === 1) continue;
         issues.push({
           category,
           title: audit.title,
