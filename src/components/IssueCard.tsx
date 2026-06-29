@@ -1,6 +1,7 @@
 "use client";
 
 import { useLang } from "./LangProvider";
+import { lighthouseTitlesEl } from "@/lib/i18n";
 
 interface Issue {
   category: string;
@@ -19,6 +20,7 @@ export function IssueCard({ issue }: { issue: Issue }) {
   const lang = useLang();
   const cfg = severityConfig[issue.severity];
   const label = lang === "el" ? cfg.el : cfg.en;
+  const title = lang === "el" ? (lighthouseTitlesEl[issue.title] ?? issue.title) : issue.title;
 
   return (
     <div className={`rounded-xl border p-4 ${cfg.bg} ${cfg.border}`}>
@@ -27,7 +29,7 @@ export function IssueCard({ issue }: { issue: Issue }) {
           {label}
         </span>
         <div>
-          <p className="font-semibold text-slate-100 text-sm">{issue.title}</p>
+          <p className="font-semibold text-slate-100 text-sm">{title}</p>
           <p className="text-slate-400 text-xs mt-1 leading-relaxed">{issue.description}</p>
           <span className="text-slate-500 text-xs mt-1 inline-block">{issue.category}</span>
         </div>

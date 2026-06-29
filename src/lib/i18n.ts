@@ -179,3 +179,38 @@ export const translations: Record<Lang, T> = {
 export function getT(lang: Lang): T {
   return translations[lang]
 }
+
+export const lighthouseTitlesEl: Record<string, string> = {
+  // Performance
+  "First Contentful Paint": "Πρώτο Περιεχόμενο (FCP)",
+  "Speed Index": "Δείκτης Ταχύτητας",
+  "Largest Contentful Paint": "Μεγαλύτερο Περιεχόμενο (LCP)",
+  "Time to Interactive": "Χρόνος Απόκρισης (TTI)",
+  "Total Blocking Time": "Συνολικός Χρόνος Αποκλεισμού (TBT)",
+  "Cumulative Layout Shift": "Μετατοπίσεις Layout (CLS)",
+  "Eliminate render-blocking resources": "Αφαίρεση πόρων που μπλοκάρουν το rendering",
+  "Reduce unused JavaScript": "Μείωση αχρησιμοποίητης JavaScript",
+  "Reduce unused CSS": "Μείωση αχρησιμοποίητου CSS",
+  "Efficiently encode images": "Βελτιστοποίηση εικόνων",
+  "Serve images in next-gen formats": "Χρήση σύγχρονων formats εικόνας (WebP)",
+  // SEO
+  "Document does not have a meta description": "Λείπει meta description",
+  "Document doesn't have a <title> element": "Λείπει ο τίτλος σελίδας",
+  "Image elements do not have [alt] attributes": "Εικόνες χωρίς alt text",
+  "Links do not have a discernible name": "Links χωρίς εμφανές όνομα",
+  "Links are not crawlable": "Links που δεν ανιχνεύονται",
+  "robots.txt is not valid": "Μη έγκυρο robots.txt",
+  "Document does not have a valid canonical URL": "Λείπει canonical URL",
+  // Accessibility
+  "Background and foreground colors do not have a sufficient contrast ratio.": "Ανεπαρκής αντίθεση χρωμάτων",
+  "Form elements do not have associated labels": "Στοιχεία φόρμας χωρίς labels",
+  "Buttons do not have an accessible name": "Κουμπιά χωρίς προσβάσιμο όνομα",
+  "Heading elements are not in a sequentially-descending order": "Λανθασμένη σειρά headings",
+  "[role]s do not have all required [aria-*] attributes": "Λείπουν ARIA attributes",
+  // Best Practices
+  "Does not use HTTPS": "Δεν χρησιμοποιεί HTTPS",
+  "Includes front-end JavaScript libraries with known security vulnerabilities": "JavaScript libraries με γνωστές ευπάθειες",
+  "Ensure CSP is effective against XSS attacks": "Αναποτελεσματικό CSP κατά XSS",
+  "Uses deprecated APIs": "Χρήση παρωχημένων APIs",
+  "Browser errors were logged to the console": "Σφάλματα στην κονσόλα",
+}
