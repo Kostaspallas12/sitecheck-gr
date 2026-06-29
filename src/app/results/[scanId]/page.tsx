@@ -1,8 +1,11 @@
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import { findScanWithResult } from "@/lib/db";
 import { ScoreRing } from "@/components/ScoreRing";
 import { IssueCard } from "@/components/IssueCard";
 import { HeaderBadge } from "@/components/HeaderBadge";
+import type { Lang } from "@/lib/i18n";
+import { getT } from "@/lib/i18n";
 
 interface PageProps {
   params: Promise<{ scanId: string }>;
@@ -12,19 +15,20 @@ interface PageProps {
 export default async function ResultsPage({ params, searchParams }: PageProps) {
   const { scanId } = await params;
   const { siteId } = await searchParams;
+  const lang = ((await cookies()).get("lang")?.value ?? "en") as Lang;
+  const t = getT(lang);
 
   const scan = await findScanWithResult(scanId);
 
   if (!scan || scan.status !== "DONE" || !scan.result) notFound();
-
   if (siteId && scan.siteId !== siteId) notFound();
 
   const r = scan.result;
 
-  function parseField<T>(field: unknown): T | null {
+  function parseField<F>(field: unknown): F | null {
     if (!field) return null;
-    if (typeof field === "string") { try { return JSON.parse(field) as T; } catch { return null; } }
-    return field as T;
+    if (typeof field === "string") { try { return JSON.parse(field) as F; } catch { return null; } }
+    return field as F;
   }
 
   const secHeaders = parseField<{ results: Array<{
@@ -53,58 +57,55 @@ export default async function ResultsPage({ params, searchParams }: PageProps) {
 
   const overallScore = Math.round(scores.reduce((sum, s) => sum + s.value, 0) / scores.length);
   const overallColor = overallScore >= 90 ? "text-green-400" : overallScore >= 50 ? "text-orange-400" : "text-red-400";
-  const overallLabel = overallScore >= 90 ? "Εξαιρετικό" : overallScore >= 70 ? "Καλό" : overallScore >= 50 ? "Μέτριο" : "Χρειάζεται βελτίωση";
+  const overallRating = overallScore >= 90 ? t.excellent : overallScore >= 70 ? t.good : overallScore >= 50 ? t.fair : t.poor;
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100 px-4 py-12">
-      <div className="max-w-4xl mx-auto space-y-10">
+    <main className="px-4 py-10">
+      <div className="max-w-4xl mx-auto space-y-8">
 
         <div>
-          <p className="text-slate-500 text-sm mb-1">Αποτελέσματα για</p>
-          <h1 className="text-3xl font-bold text-indigo-400">{scan.site.domain}</h1>
-          <p className="text-slate-500 text-xs mt-1">
-            Ανάλυση: {new Date(scan.finishedAt!).toLocaleString("el-GR")}
-          </p>
+          <p className="text-slate-500 text-sm mb-1">{t.resultsFor}</p>
+          <h1 className="text-3xl font-bold text-blue-400">{scan.site.domain}</h1>
         </div>
 
         <section className="bg-slate-900 border border-slate-800 rounded-2xl p-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-            <h2 className="text-lg font-semibold">Βαθμολογίες ανάλυσης</h2>
+            <h2 className="text-lg font-semibold">{t.scoresTitle}</h2>
             <div className="flex items-center gap-3 bg-slate-800/60 border border-slate-700/60 rounded-xl px-5 py-3">
-              <span className="text-slate-400 text-sm">Συνολική βαθμολογία</span>
+              <span className="text-slate-400 text-sm">{t.overallScore}</span>
               <span className={`text-3xl font-extrabold ${overallColor}`}>{overallScore}</span>
-              <span className={`text-xs font-semibold ${overallColor}`}>{overallLabel}</span>
+              <span className={`text-xs font-semibold ${overallColor}`}>{overallRating}</span>
             </div>
           </div>
           <div className="flex flex-wrap justify-around gap-8">
             {scores.map((s) => (
-              <ScoreRing key={s.label} score={s.value} label={s.label} />
+              <ScoreRing key={s.label} score={s.value} label={t.scoreLabels[s.label] ?? s.label} />
             ))}
           </div>
         </section>
 
         {ssl && (
           <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-            <h2 className="text-lg font-semibold mb-4">SSL / HTTPS</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-4">
+            <h2 className="text-lg font-semibold mb-4">{t.sslTitle}</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm mb-4">
               <div className="bg-slate-800 rounded-xl p-3">
-                <p className="text-slate-500 text-xs mb-1">Κατάσταση</p>
+                <p className="text-slate-500 text-xs mb-1">{t.sslStatus}</p>
                 <p className={ssl.valid ? "text-green-400 font-semibold" : "text-red-400 font-semibold"}>
-                  {ssl.valid ? "Έγκυρο" : "Μη έγκυρο"}
+                  {ssl.valid ? t.sslValid : t.sslInvalid}
                 </p>
               </div>
               <div className="bg-slate-800 rounded-xl p-3">
-                <p className="text-slate-500 text-xs mb-1">Εκδότης</p>
+                <p className="text-slate-500 text-xs mb-1">{t.sslIssuer}</p>
                 <p className="text-slate-200 font-medium truncate">{ssl.issuer ?? "—"}</p>
               </div>
               <div className="bg-slate-800 rounded-xl p-3">
-                <p className="text-slate-500 text-xs mb-1">Λήγει σε</p>
+                <p className="text-slate-500 text-xs mb-1">{t.sslExpiry}</p>
                 <p className={`font-semibold ${(ssl.daysUntilExpiry ?? 0) < 30 ? "text-orange-400" : "text-green-400"}`}>
-                  {ssl.daysUntilExpiry !== undefined ? `${ssl.daysUntilExpiry} μέρες` : "—"}
+                  {ssl.daysUntilExpiry !== undefined ? `${ssl.daysUntilExpiry} ${t.days}` : "—"}
                 </p>
               </div>
               <div className="bg-slate-800 rounded-xl p-3">
-                <p className="text-slate-500 text-xs mb-1">Πρωτόκολλο</p>
+                <p className="text-slate-500 text-xs mb-1">{t.sslProtocol}</p>
                 <p className="text-slate-200 font-medium">{ssl.protocol ?? "—"}</p>
               </div>
             </div>
@@ -122,7 +123,7 @@ export default async function ResultsPage({ params, searchParams }: PageProps) {
 
         {secHeaders && (
           <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-            <h2 className="text-lg font-semibold mb-4">Security Headers</h2>
+            <h2 className="text-lg font-semibold mb-4">{t.secHeadersTitle}</h2>
             <div className="divide-y divide-slate-800">
               {secHeaders.results.map((h) => (
                 <HeaderBadge key={h.header} result={h} />
@@ -133,21 +134,22 @@ export default async function ResultsPage({ params, searchParams }: PageProps) {
 
         {issues && issues.length > 0 && (
           <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-            <h2 className="text-lg font-semibold mb-4">
-              Προβλήματα ({issues.length})
-            </h2>
+            <h2 className="text-lg font-semibold mb-4">{t.issuesTitle} ({issues.length})</h2>
             <div className="space-y-3">
               {issues
-                .sort((a, b) => {
-                  const order = { error: 0, warning: 1, info: 2 };
-                  return order[a.severity] - order[b.severity];
-                })
+                .sort((a, b) => ({ error: 0, warning: 1, info: 2 }[a.severity] - { error: 0, warning: 1, info: 2 }[b.severity]))
                 .map((issue, i) => (
                   <IssueCard key={i} issue={issue} />
                 ))}
             </div>
           </section>
         )}
+
+        <div className="pt-2 pb-6">
+          <a href="/" className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition font-medium">
+            {t.returnHome}
+          </a>
+        </div>
 
       </div>
     </main>

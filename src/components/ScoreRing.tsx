@@ -8,14 +8,6 @@ interface Props {
   size?: number;
 }
 
-const labelMap: Record<string, string> = {
-  "Performance": "Απόδοση",
-  "SEO": "SEO",
-  "Accessibility": "Προσβασιμότητα",
-  "Best Practices": "Βέλτιστες Πρακτικές",
-  "Security": "Ασφάλεια",
-};
-
 function getColor(score: number) {
   if (score >= 90) return "#22c55e";
   if (score >= 50) return "#f97316";
@@ -65,7 +57,7 @@ export function ScoreRing({ score, label, size = 96 }: Props) {
         {displayScore}
       </span>
       <span className="text-xs text-slate-400 font-medium text-center leading-tight max-w-[90px]">
-        {labelMap[label] ?? label}
+        {label}
       </span>
     </div>
   );
