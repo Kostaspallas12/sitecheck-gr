@@ -123,7 +123,7 @@ export default async function ResultsPage({ params, searchParams }: PageProps) {
         {secHeaders && (
           <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
             <h2 className="text-lg font-semibold mb-4">Security Headers</h2>
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {secHeaders.results.map((h) => (
                 <HeaderBadge key={h.header} result={h} />
               ))}
