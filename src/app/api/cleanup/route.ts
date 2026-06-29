@@ -2,21 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/firebase";
 import { Timestamp } from "firebase-admin/firestore";
 
-// Καλείται από cron job κάθε μέρα
+// Καλείται από cron job κάθε 2 μήνες
 export async function GET(req: NextRequest) {
   const secret = req.nextUrl.searchParams.get("secret");
   if (secret !== process.env.CLEANUP_SECRET) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const cutoff = Timestamp.fromDate(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
+  const cutoff = Timestamp.fromDate(new Date(Date.now() - 60 * 24 * 60 * 60 * 1000));
 
   try {
     let deletedUsers = 0;
     let deletedSites = 0;
     let deletedScans = 0;
 
-    // Βρες users που δημιουργήθηκαν πριν από 7+ μέρες
+    // Βρες users που δημιουργήθηκαν πριν από 2+ μήνες
     const usersSnap = await db.collection("users")
       .where("createdAt", "<", cutoff)
       .get();
