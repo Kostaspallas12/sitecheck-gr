@@ -120,7 +120,7 @@ export default function HomePage() {
           { icon: "🔒", label: "Security Headers" },
           { icon: "⚡", label: "Performance" },
           { icon: "🔍", label: "SEO" },
-          { icon: "♿", label: "Accessibility" },
+          { icon: "👁️", label: "Accessibility" },
         ].map(({ icon, label }) => (
           <div key={label} className="bg-slate-900 border border-slate-800 rounded-xl p-4">
             <div className="text-2xl mb-2">{icon}</div>
