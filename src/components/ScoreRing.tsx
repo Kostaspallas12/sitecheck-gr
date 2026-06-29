@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 interface Props {
   score: number;
   label: string;
@@ -15,8 +17,30 @@ function getColor(score: number) {
 export function ScoreRing({ score, label, size = 96 }: Props) {
   const radius = (size - 12) / 2;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (score / 100) * circumference;
+  const targetOffset = circumference - (score / 100) * circumference;
   const color = getColor(score);
+
+  const [offset, setOffset] = useState(circumference);
+  const [displayScore, setDisplayScore] = useState(0);
+
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => {
+      setOffset(targetOffset);
+    });
+
+    let start: number | null = null;
+    const duration = 1000;
+
+    function step(timestamp: number) {
+      if (!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+      setDisplayScore(Math.round(progress * score));
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+
+    return () => cancelAnimationFrame(raf);
+  }, [score, targetOffset]);
 
   return (
     <div className="flex flex-col items-center gap-1">
@@ -31,11 +55,11 @@ export function ScoreRing({ score, label, size = 96 }: Props) {
           strokeDasharray={circumference}
           strokeDashoffset={offset}
           strokeLinecap="round"
-          style={{ transition: "stroke-dashoffset 0.8s ease" }}
+          style={{ transition: "stroke-dashoffset 1s ease-out" }}
         />
       </svg>
       <span className="text-2xl font-bold -mt-[68px] mb-[52px]" style={{ color }}>
-        {score}
+        {displayScore}
       </span>
       <span className="text-xs text-slate-400 font-medium uppercase tracking-wide">{label}</span>
     </div>
