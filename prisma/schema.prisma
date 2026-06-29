@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+  sites     Site[]
+}
+
+model Site {
+  id         String   @id @default(cuid())
+  domain     String
+  userId     String
+  verified   Boolean  @default(false)
+  verifyToken String  @unique @default(cuid())
+  verifyMethod String @default("dns") // dns | meta | file
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+  scans      Scan[]
+
+  @@unique([domain, userId])
+}
+
+model Scan {
+  id        String     @id @default(cuid())
+  siteId    String
+  status    ScanStatus @default(PENDING)
+  createdAt DateTime   @default(now())
+  finishedAt DateTime?
+  site      Site       @relation(fields: [siteId], references: [id])
+  result    ScanResult?
+}
+
+model ScanResult {
+  id             String  @id @default(cuid())
+  scanId         String  @unique
+  scan           Scan    @relation(fields: [scanId], references: [id])
+
+  // Scores (0-100)
+  performanceScore  Int?
+  seoScore          Int?
+  accessibilityScore Int?
+  bestPracticesScore Int?
+  securityScore     Int?
+
+  // Raw JSON data
+  lighthouseData    Json?
+  securityHeaders   Json?
+  sslData           Json?
+  issues            Json?
+}
+
+enum ScanStatus {
+  PENDING
+  RUNNING
+  DONE
+  FAILED
+}
