@@ -76,9 +76,14 @@ function buildEmailHtml(domain: string, scores: { label: string; value: number }
     .map(
       (s) => `
     <tr>
-      <td style="padding:16px 0;color:#374151;font-size:15px;border-bottom:1px solid #f3f4f6;">${s.label}</td>
-      <td style="padding:16px 0;text-align:right;border-bottom:1px solid #f3f4f6;">
-        <span style="font-weight:800;font-size:18px;color:${scoreColor(s.value)};">${s.value}</span><span style="color:#9ca3af;font-size:12px;"> /100</span>
+      <td style="padding:14px 0;border-bottom:1px solid #f3f4f6;">
+        <span style="color:#6b7280;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:0.4px;">${s.label}</span>
+        <div style="margin-top:6px;background:#f3f4f6;border-radius:4px;height:6px;width:100%;">
+          <div style="background:${scoreColor(s.value)};border-radius:4px;height:6px;width:${s.value}%;"></div>
+        </div>
+      </td>
+      <td style="padding:14px 0 14px 16px;text-align:right;border-bottom:1px solid #f3f4f6;white-space:nowrap;vertical-align:top;">
+        <span style="font-weight:800;font-size:22px;color:${scoreColor(s.value)};">${s.value}</span><span style="color:#d1d5db;font-size:12px;font-weight:500;">/100</span>
       </td>
     </tr>`
     )
@@ -90,40 +95,53 @@ function buildEmailHtml(domain: string, scores: { label: string; value: number }
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
 </head>
-<body style="margin:0;padding:0;background:#f9fafb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+<body style="margin:0;padding:0;background:#f3f4f6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
 
-  <div style="display:none;max-height:0;overflow:hidden;font-size:1px;color:#f9fafb;">Τα αποτελέσματα ανάλυσης για ${domain} είναι έτοιμα.</div>
+  <div style="display:none;max-height:0;overflow:hidden;font-size:1px;color:#f3f4f6;">Τα αποτελέσματα ανάλυσης για ${domain} είναι έτοιμα.</div>
 
-  <div style="max-width:520px;margin:0 auto;padding:40px 16px;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f3f4f6;">
+    <tr><td align="center" style="padding:40px 16px;">
 
-    <!-- Logo -->
-    <div style="margin-bottom:32px;">
-      <div style="display:inline-block;background:#1d4ed8;border-radius:8px;padding:8px 16px;">
-        <span style="color:#ffffff;font-weight:700;font-size:15px;letter-spacing:-0.3px;">SiteCheck</span>
-      </div>
-    </div>
+      <table width="520" cellpadding="0" cellspacing="0">
 
-    <!-- Card -->
-    <div style="background:#ffffff;border-radius:16px;padding:32px;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+        <!-- Header -->
+        <tr>
+          <td style="background:#1e40af;border-radius:16px 16px 0 0;padding:32px 36px;">
+            <div style="display:inline-block;background:rgba(255,255,255,0.15);border-radius:8px;padding:6px 14px;margin-bottom:20px;">
+              <span style="color:#ffffff;font-weight:700;font-size:13px;letter-spacing:0.5px;">SITECHECK</span>
+            </div>
+            <div>
+              <p style="color:rgba(255,255,255,0.65);font-size:12px;margin:0 0 6px 0;letter-spacing:0.5px;text-transform:uppercase;">Ανάλυση ολοκληρώθηκε για</p>
+              <h1 style="color:#ffffff;font-size:20px;font-weight:700;margin:0;word-break:break-all;">${domain}</h1>
+            </div>
+          </td>
+        </tr>
 
-      <p style="color:#6b7280;font-size:13px;margin:0 0 6px 0;text-transform:uppercase;letter-spacing:0.6px;font-weight:600;">Αποτελέσματα για</p>
-      <h1 style="color:#111827;font-size:20px;font-weight:700;margin:0 0 28px 0;word-break:break-all;">${domain}</h1>
+        <!-- Body -->
+        <tr>
+          <td style="background:#ffffff;padding:32px 36px;">
+            <table width="100%" cellpadding="0" cellspacing="0">
+              <tbody>${rows}</tbody>
+            </table>
 
-      <table style="width:100%;border-collapse:collapse;">
-        <tbody>${rows}</tbody>
+            <div style="margin-top:32px;">
+              <a href="${resultsUrl}" style="display:block;background:#1e40af;color:#ffffff;text-decoration:none;padding:16px 24px;border-radius:10px;font-weight:600;font-size:15px;text-align:center;">
+                Δες τα πλήρη αποτελέσματα →
+              </a>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td style="background:#f9fafb;border-radius:0 0 16px 16px;border-top:1px solid #e5e7eb;padding:20px 36px;text-align:center;">
+            <p style="color:#9ca3af;font-size:12px;margin:0;">SiteCheck · Εργαλείο ανάλυσης website</p>
+          </td>
+        </tr>
+
       </table>
-
-      <div style="margin-top:32px;">
-        <a href="${resultsUrl}" style="display:block;background:#1d4ed8;color:#ffffff;text-decoration:none;padding:15px 24px;border-radius:10px;font-weight:600;font-size:15px;text-align:center;">
-          Δες τα πλήρη αποτελέσματα →
-        </a>
-      </div>
-
-    </div>
-
-    <p style="text-align:center;color:#9ca3af;font-size:12px;margin-top:24px;">SiteCheck — εργαλείο ανάλυσης website</p>
-
-  </div>
+    </td></tr>
+  </table>
 </body>
 </html>`;
 }
