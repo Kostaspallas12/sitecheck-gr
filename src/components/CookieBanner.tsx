@@ -18,16 +18,23 @@ function writeCookie(name: string, value: string) {
 }
 
 function loadGA(id: string) {
-  if (document.getElementById("ga-script")) return;
-  const s1 = document.createElement("script");
-  s1.id = "ga-script";
-  s1.async = true;
-  s1.src = `https://www.googletagmanager.com/gtag/js?id=${id}`;
-  document.head.appendChild(s1);
-  const s2 = document.createElement("script");
-  s2.id = "ga-init";
-  s2.text = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${id}');`;
-  document.head.appendChild(s2);
+  if ((window as Record<string, unknown>)["gaLoaded"]) return;
+  (window as Record<string, unknown>)["gaLoaded"] = true;
+
+  (window as Record<string, unknown>)["dataLayer"] =
+    (window as Record<string, unknown>)["dataLayer"] || [];
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function gtag(..._args: unknown[]) { (window as any).dataLayer.push(arguments); }
+  (window as Record<string, unknown>)["gtag"] = gtag;
+
+  gtag("js", new Date());
+  gtag("config", id);
+
+  const s = document.createElement("script");
+  s.async = true;
+  s.src = `https://www.googletagmanager.com/gtag/js?id=${id}`;
+  document.head.appendChild(s);
 }
 
 export function CookieBanner() {
