@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLang } from "@/components/LangProvider";
 import { getT } from "@/lib/i18n";
+import { useSessionUser } from "@/components/AuthProvider";
 
 const FEATURE_ICONS = [
   <svg key="shield" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -119,9 +120,10 @@ export default function HomePage() {
   const router = useRouter();
   const lang = useLang();
   const t = getT(lang);
+  const user = useSessionUser();
 
   const [domain, setDomain] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(user?.email ?? "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [selected, setSelected] = useState<number | null>(null);
@@ -176,14 +178,26 @@ export default function HomePage() {
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-slate-400 mb-1.5">{t.emailLabel}</label>
+          <label className="block text-xs font-medium text-slate-400 mb-1.5">
+            {t.emailLabel}
+            {user && (
+              <span className="ml-2 text-xs text-blue-400/70 font-normal">
+                {lang === "el" ? "(από τον λογαριασμό σου)" : "(from your account)"}
+              </span>
+            )}
+          </label>
           <input
             type="email"
             placeholder="you@example.com"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => !user && setEmail(e.target.value)}
             required
-            className="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-2.5 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-sm"
+            readOnly={!!user}
+            className={`w-full border rounded-xl px-4 py-2.5 text-sm transition ${
+              user
+                ? "bg-slate-800/50 border-slate-700/40 text-slate-400 cursor-default select-none"
+                : "bg-slate-900 border-slate-700/80 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+            }`}
           />
         </div>
         {error && (
