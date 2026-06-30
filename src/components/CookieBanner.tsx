@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Script from "next/script";
 import { useLang } from "./LangProvider";
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
@@ -18,18 +17,34 @@ function writeCookie(name: string, value: string) {
   document.cookie = `${name}=${value}; path=/; max-age=31536000; SameSite=Lax`;
 }
 
+function loadGA(id: string) {
+  if (document.getElementById("ga-script")) return;
+  const s1 = document.createElement("script");
+  s1.id = "ga-script";
+  s1.async = true;
+  s1.src = `https://www.googletagmanager.com/gtag/js?id=${id}`;
+  document.head.appendChild(s1);
+  const s2 = document.createElement("script");
+  s2.id = "ga-init";
+  s2.innerHTML = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${id}');`;
+  document.head.appendChild(s2);
+}
+
 export function CookieBanner() {
   const lang = useLang();
   const [status, setStatus] = useState<"unknown" | "pending" | "accepted" | "declined">("unknown");
 
   useEffect(() => {
     const existing = getCookieValue("cookie_consent");
-    setStatus(existing === "accepted" ? "accepted" : existing === "declined" ? "declined" : "pending");
+    const resolved = existing === "accepted" ? "accepted" : existing === "declined" ? "declined" : "pending";
+    setStatus(resolved);
+    if (resolved === "accepted" && GA_ID) loadGA(GA_ID);
   }, []);
 
   const accept = () => {
     writeCookie("cookie_consent", "accepted");
     setStatus("accepted");
+    if (GA_ID) loadGA(GA_ID);
   };
 
   const decline = () => {
@@ -39,20 +54,6 @@ export function CookieBanner() {
 
   return (
     <>
-      {status === "accepted" && GA_ID && (
-        <>
-          <Script
-            src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-            strategy="afterInteractive"
-          />
-          <Script id="ga-init" strategy="afterInteractive">{`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${GA_ID}');
-          `}</Script>
-        </>
-      )}
 
       {status === "pending" && (
         <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-4">
