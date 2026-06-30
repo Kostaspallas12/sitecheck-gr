@@ -118,9 +118,10 @@ export async function createScanResult(data: Omit<ScanResultDoc, never>) {
 export async function getSitesByUserId(userId: string): Promise<SiteDoc[]> {
   const snap = await db.collection("sites")
     .where("userId", "==", userId)
-    .orderBy("createdAt", "desc")
     .get();
-  return snap.docs.map((doc) => ({ id: doc.id, ...(doc.data() as Omit<SiteDoc, "id">) }));
+  return snap.docs
+    .map((doc) => ({ id: doc.id, ...(doc.data() as Omit<SiteDoc, "id">) }))
+    .sort((a, b) => 0); // order doesn't matter for display
 }
 
 export interface ScanSummary {
@@ -141,11 +142,11 @@ export async function getLatestCompletedScan(siteId: string): Promise<ScanSummar
   const snap = await db.collection("scans")
     .where("siteId", "==", siteId)
     .where("status", "==", "DONE")
-    .orderBy("createdAt", "desc")
-    .limit(1)
     .get();
   if (snap.empty) return null;
-  const doc = snap.docs[0];
+  // Sort in memory — avoids needing a Firestore composite index
+  const sorted = snap.docs.sort((a, b) => b.data().createdAt.toMillis() - a.data().createdAt.toMillis());
+  const doc = sorted[0];
   const data = doc.data();
   const resultSnap = await db.collection("scan_results").doc(doc.id).get();
   const result = resultSnap.exists ? resultSnap.data()! : null;
@@ -168,10 +169,11 @@ export async function getScansHistory(siteId: string, limit = 8): Promise<ScanSu
   const snap = await db.collection("scans")
     .where("siteId", "==", siteId)
     .where("status", "==", "DONE")
-    .orderBy("createdAt", "desc")
-    .limit(limit)
     .get();
   if (snap.empty) return [];
+  // Sort newest first in memory, take top N
+  snap.docs.sort((a, b) => b.data().createdAt.toMillis() - a.data().createdAt.toMillis());
+  snap.docs.splice(limit);
   return Promise.all(snap.docs.map(async (doc) => {
     const data = doc.data();
     const resultSnap = await db.collection("scan_results").doc(doc.id).get();
