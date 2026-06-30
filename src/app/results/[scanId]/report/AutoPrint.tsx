@@ -1,0 +1,21 @@
+"use client";
+import { useEffect } from "react";
+
+export function AutoPrint() {
+  useEffect(() => {
+    const t = setTimeout(() => window.print(), 800);
+    return () => clearTimeout(t);
+  }, []);
+
+  return (
+    <button
+      onClick={() => window.print()}
+      className="print:hidden fixed top-4 right-4 z-50 flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium rounded-xl border border-slate-700 shadow-xl transition"
+    >
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+      </svg>
+      Print / Save as PDF
+    </button>
+  );
+}

@@ -6,6 +6,7 @@ import { getT } from "@/lib/i18n";
 import { ResultsTabs } from "@/components/ResultsTabs";
 import type { ResultsData } from "@/components/ResultsTabs";
 import { EmailResultsButton } from "@/components/EmailResultsButton";
+import { CopyLinkButton } from "@/components/CopyLinkButton";
 
 interface PageProps {
   params: Promise<{ scanId: string }>;
@@ -89,10 +90,24 @@ export default async function ResultsPage({ params, searchParams }: PageProps) {
         {/* Email results */}
         <EmailResultsButton scanId={scanId} defaultEmail={scan.site.userEmail ?? ""} />
 
-        <div className="pt-2 pb-6">
+        {/* Actions row */}
+        <div className="flex items-center gap-3 flex-wrap pt-2 pb-6">
           <a href="/" className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition font-medium">
             {t.returnHome}
           </a>
+          <div className="ml-auto flex items-center gap-2">
+            <CopyLinkButton />
+            <a
+              href={`/results/${scanId}/report`}
+              target="_blank"
+              className="inline-flex items-center gap-2 text-sm px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/60 rounded-xl transition"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+              </svg>
+              {lang === "el" ? "Εξαγωγή PDF" : "Export PDF"}
+            </a>
+          </div>
         </div>
 
       </div>

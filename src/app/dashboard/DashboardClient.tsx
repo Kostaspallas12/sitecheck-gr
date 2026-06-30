@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Lang } from "@/lib/i18n";
+import { ScoreHistoryChart } from "@/components/ScoreHistoryChart";
 
 interface ScoreSet {
   performance?: number;
@@ -133,8 +134,13 @@ function SiteCard({ data, lang }: { data: SiteData; lang: Lang }) {
         <p className="text-slate-500 text-sm mb-4">{isEl ? "Επαλήθευσε το site για να ξεκινήσεις ανάλυση." : "Verify the site to start scanning."}</p>
       )}
 
+      {/* Score history chart */}
+      {data.history.length >= 2 && (
+        <ScoreHistoryChart history={data.history.map((h) => ({ createdAt: h.createdAt, scores: h.scores }))} />
+      )}
+
       {/* Actions */}
-      <div className="flex items-center gap-2 flex-wrap">
+      <div className="flex items-center gap-2 flex-wrap mt-4">
         {data.latest && (
           <a
             href={`/results/${data.latest.scanId}`}
