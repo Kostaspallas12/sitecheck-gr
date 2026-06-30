@@ -18,19 +18,14 @@ function writeCookie(name: string, value: string) {
 }
 
 function loadGA(id: string) {
-  if ((window as Record<string, unknown>)["gaLoaded"]) return;
-  (window as Record<string, unknown>)["gaLoaded"] = true;
-
-  (window as Record<string, unknown>)["dataLayer"] =
-    (window as Record<string, unknown>)["dataLayer"] || [];
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function gtag(..._args: unknown[]) { (window as any).dataLayer.push(arguments); }
-  (window as Record<string, unknown>)["gtag"] = gtag;
-
-  gtag("js", new Date());
-  gtag("config", id);
-
+  const w = window as any;
+  if (w.gaLoaded) return;
+  w.gaLoaded = true;
+  w.dataLayer = w.dataLayer || [];
+  w.gtag = function () { w.dataLayer.push(arguments); };
+  w.gtag("js", new Date());
+  w.gtag("config", id);
   const s = document.createElement("script");
   s.async = true;
   s.src = `https://www.googletagmanager.com/gtag/js?id=${id}`;
