@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { findOrCreateUser, findSiteByDomainAndUser, createSite, updateSite } from "@/lib/db";
+import { findOrCreateUser, findSiteByDomainAndUser, findVerifiedSiteByDomain, createSite, updateSite } from "@/lib/db";
 import { randomUUID } from "crypto";
 import { checkRateLimit, getClientIP } from "@/lib/security/rate-limiter";
 
@@ -25,6 +25,15 @@ export async function POST(req: NextRequest) {
     const hostname = new URL(`https://${domain.replace(/^https?:\/\//, "")}`).hostname;
 
     const user = await findOrCreateUser(email);
+
+    // Block if domain is already verified by a different user
+    const claimed = await findVerifiedSiteByDomain(hostname);
+    if (claimed && claimed.userId !== user.id) {
+      return NextResponse.json(
+        { error: "Αυτό το domain έχει ήδη επαληθευτεί από άλλο χρήστη." },
+        { status: 409 }
+      );
+    }
 
     const existing = await findSiteByDomainAndUser(hostname, user.id);
 
