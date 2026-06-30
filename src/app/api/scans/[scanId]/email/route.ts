@@ -76,10 +76,9 @@ function buildEmailHtml(domain: string, scores: { label: string; value: number }
     .map(
       (s) => `
     <tr>
-      <td style="padding:12px 20px;color:#94a3b8;font-size:14px;border-bottom:1px solid #1e293b;">${s.label}</td>
-      <td style="padding:12px 20px;text-align:right;border-bottom:1px solid #1e293b;">
-        <span style="font-weight:700;font-size:16px;color:${scoreColor(s.value)};">${s.value}</span>
-        <span style="color:#475569;font-size:12px;margin-left:2px;">/100</span>
+      <td style="padding:14px 20px;color:#cbd5e1;font-size:14px;border-bottom:1px solid #0f172a;">${s.label}</td>
+      <td style="padding:14px 20px;text-align:right;border-bottom:1px solid #0f172a;">
+        <span style="display:inline-block;background:${scoreColor(s.value)}22;color:${scoreColor(s.value)};font-weight:700;font-size:15px;padding:3px 10px;border-radius:20px;">${s.value}<span style="font-size:11px;opacity:0.7;">/100</span></span>
       </td>
     </tr>`
     )
@@ -87,41 +86,49 @@ function buildEmailHtml(domain: string, scores: { label: string; value: number }
 
   return `<!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background:#0f172a;font-family:Arial,Helvetica,sans-serif;">
-  <div style="max-width:560px;margin:0 auto;padding:48px 24px;">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+</head>
+<body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,Helvetica,sans-serif;">
 
-    <div style="text-align:center;margin-bottom:40px;">
-      <div style="display:inline-block;background:#2563eb;border-radius:8px;padding:10px 20px;">
-        <span style="color:#ffffff;font-weight:700;font-size:16px;letter-spacing:-0.3px;">SiteCheck</span>
+  <!-- Preheader -->
+  <div style="display:none;max-height:0;overflow:hidden;">Τα αποτελέσματα ανάλυσης για ${domain} είναι έτοιμα.</div>
+
+  <div style="max-width:560px;margin:0 auto;padding:32px 16px;">
+
+    <!-- Card -->
+    <div style="background:#0f172a;border-radius:16px;overflow:hidden;">
+
+      <!-- Header -->
+      <div style="background:#1e293b;padding:24px 32px;border-bottom:1px solid #334155;">
+        <div style="display:inline-block;background:#2563eb;border-radius:8px;padding:6px 14px;margin-bottom:16px;">
+          <span style="color:#fff;font-weight:700;font-size:14px;letter-spacing:-0.2px;">SiteCheck</span>
+        </div>
+        <p style="color:#64748b;font-size:12px;margin:0 0 4px 0;text-transform:uppercase;letter-spacing:0.8px;">Αποτελέσματα για</p>
+        <h1 style="color:#60a5fa;font-size:22px;font-weight:700;margin:0;word-break:break-all;">${domain}</h1>
       </div>
+
+      <!-- Scores -->
+      <div style="padding:8px 0;">
+        <table style="width:100%;border-collapse:collapse;">
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+
+      <!-- CTA -->
+      <div style="padding:24px 32px;">
+        <a href="${resultsUrl}" style="display:block;background:#2563eb;color:#ffffff;text-decoration:none;padding:14px 24px;border-radius:10px;font-weight:600;font-size:15px;text-align:center;">
+          Δες τα πλήρη αποτελέσματα →
+        </a>
+      </div>
+
+      <!-- Footer -->
+      <div style="padding:16px 32px 24px;text-align:center;border-top:1px solid #1e293b;">
+        <p style="color:#475569;font-size:12px;margin:0;">SiteCheck — εργαλείο ανάλυσης website</p>
+      </div>
+
     </div>
-
-    <p style="color:#64748b;font-size:13px;margin:0 0 6px 0;text-transform:uppercase;letter-spacing:0.5px;">Αποτελέσματα για</p>
-    <h1 style="color:#60a5fa;font-size:28px;font-weight:700;margin:0 0 32px 0;">${domain}</h1>
-
-    <table style="width:100%;border-collapse:collapse;background:#1e293b;border-radius:12px;overflow:hidden;margin-bottom:36px;">
-      <thead>
-        <tr style="background:#0f172a;">
-          <th style="padding:12px 20px;text-align:left;color:#475569;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;">Κατηγορία</th>
-          <th style="padding:12px 20px;text-align:right;color:#475569;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;">Βαθμολογία</th>
-        </tr>
-      </thead>
-      <tbody>${rows}</tbody>
-    </table>
-
-    <div style="text-align:center;margin-bottom:48px;">
-      <a href="${resultsUrl}" style="display:inline-block;background:#2563eb;color:#ffffff;text-decoration:none;padding:14px 36px;border-radius:8px;font-weight:600;font-size:15px;">
-        Δες τα πλήρη αποτελέσματα →
-      </a>
-    </div>
-
-    <div style="border-top:1px solid #1e293b;padding-top:24px;text-align:center;">
-      <p style="color:#334155;font-size:12px;margin:0;line-height:1.6;">
-        SiteCheck — εργαλείο ανάλυσης website
-      </p>
-    </div>
-
   </div>
 </body>
 </html>`;
