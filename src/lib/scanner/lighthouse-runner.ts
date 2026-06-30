@@ -24,21 +24,7 @@ export async function runLighthouse(url: string): Promise<LighthouseScores> {
   try {
     browser = await puppeteer.launch({
       headless: true,
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-gpu",
-        "--disable-extensions",
-        "--disable-background-networking",
-        "--disable-default-apps",
-        "--disable-sync",
-        "--disable-translate",
-        "--hide-scrollbars",
-        "--mute-audio",
-        "--no-first-run",
-        "--safebrowsing-disable-auto-update",
-      ],
+      args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
     });
 
     const port = parseInt(new URL(browser.wsEndpoint()).port);
@@ -48,10 +34,6 @@ export async function runLighthouse(url: string): Promise<LighthouseScores> {
       output: "json",
       logLevel: "error",
       onlyCategories: ["performance", "seo", "accessibility", "best-practices"],
-      formFactor: "desktop",
-      screenEmulation: { disabled: true },
-      throttlingMethod: "provided",
-      disableStorageReset: true,
     });
 
     if (!result?.lhr) throw new Error("Lighthouse δεν επέστρεψε αποτελέσματα");
