@@ -76,14 +76,22 @@ function buildEmailHtml(domain: string, scores: { label: string; value: number }
     .map(
       (s) => `
     <tr>
-      <td style="padding:14px 0;border-bottom:1px solid #f3f4f6;">
-        <span style="color:#6b7280;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:0.4px;">${s.label}</span>
-        <div style="margin-top:6px;background:#f3f4f6;border-radius:4px;height:6px;width:100%;">
-          <div style="background:${scoreColor(s.value)};border-radius:4px;height:6px;width:${s.value}%;"></div>
-        </div>
-      </td>
-      <td style="padding:14px 0 14px 16px;text-align:right;border-bottom:1px solid #f3f4f6;white-space:nowrap;vertical-align:top;">
-        <span style="font-weight:800;font-size:22px;color:${scoreColor(s.value)};">${s.value}</span><span style="color:#d1d5db;font-size:12px;font-weight:500;">/100</span>
+      <td style="padding:16px 0;border-bottom:1px solid #1e293b;">
+        <table width="100%" cellpadding="0" cellspacing="0">
+          <tr>
+            <td style="color:#94a3b8;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;padding-bottom:8px;">${s.label}</td>
+            <td style="text-align:right;vertical-align:top;padding-bottom:8px;">
+              <span style="font-weight:800;font-size:20px;color:${scoreColor(s.value)};">${s.value}</span><span style="color:#475569;font-size:11px;"> /100</span>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <table width="100%" cellpadding="0" cellspacing="0" style="background:#1e293b;border-radius:4px;height:5px;">
+                <tr><td width="${s.value}%" style="background:${scoreColor(s.value)};border-radius:4px;height:5px;font-size:0;">&nbsp;</td><td></td></tr>
+              </table>
+            </td>
+          </tr>
+        </table>
       </td>
     </tr>`
     )
@@ -95,47 +103,58 @@ function buildEmailHtml(domain: string, scores: { label: string; value: number }
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
 </head>
-<body style="margin:0;padding:0;background:#f3f4f6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+<body style="margin:0;padding:0;background:#020617;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
 
-  <div style="display:none;max-height:0;overflow:hidden;font-size:1px;color:#f3f4f6;">Τα αποτελέσματα ανάλυσης για ${domain} είναι έτοιμα.</div>
+  <div style="display:none;max-height:0;overflow:hidden;font-size:1px;color:#020617;">Τα αποτελέσματα ανάλυσης για ${domain} είναι έτοιμα.</div>
 
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f3f4f6;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#020617;">
     <tr><td align="center" style="padding:40px 16px;">
 
-      <table width="520" cellpadding="0" cellspacing="0">
+      <table width="520" cellpadding="0" cellspacing="0" style="border-radius:16px;overflow:hidden;">
 
         <!-- Header -->
         <tr>
-          <td style="background:#1e40af;border-radius:16px 16px 0 0;padding:32px 36px;">
-            <div style="display:inline-block;background:rgba(255,255,255,0.15);border-radius:8px;padding:6px 14px;margin-bottom:20px;">
-              <span style="color:#ffffff;font-weight:700;font-size:13px;letter-spacing:0.5px;">SITECHECK</span>
-            </div>
-            <div>
-              <p style="color:rgba(255,255,255,0.65);font-size:12px;margin:0 0 6px 0;letter-spacing:0.5px;text-transform:uppercase;">Ανάλυση ολοκληρώθηκε για</p>
-              <h1 style="color:#ffffff;font-size:20px;font-weight:700;margin:0;word-break:break-all;">${domain}</h1>
-            </div>
+          <td style="background:#0f172a;padding:32px 36px;border-bottom:1px solid #1e293b;">
+            <table cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="background:#2563eb;border-radius:8px;padding:7px 14px;">
+                  <span style="color:#ffffff;font-weight:700;font-size:13px;letter-spacing:0.3px;">SiteCheck</span>
+                </td>
+              </tr>
+            </table>
+            <p style="color:#64748b;font-size:12px;margin:20px 0 5px 0;text-transform:uppercase;letter-spacing:0.6px;">Ανάλυση ολοκληρώθηκε για</p>
+            <h1 style="color:#f1f5f9;font-size:22px;font-weight:700;margin:0;word-break:break-all;">${domain}</h1>
           </td>
         </tr>
 
-        <!-- Body -->
+        <!-- Scores -->
         <tr>
-          <td style="background:#ffffff;padding:32px 36px;">
+          <td style="background:#0f172a;padding:8px 36px 24px;">
             <table width="100%" cellpadding="0" cellspacing="0">
               <tbody>${rows}</tbody>
             </table>
+          </td>
+        </tr>
 
-            <div style="margin-top:32px;">
-              <a href="${resultsUrl}" style="display:block;background:#1e40af;color:#ffffff;text-decoration:none;padding:16px 24px;border-radius:10px;font-weight:600;font-size:15px;text-align:center;">
-                Δες τα πλήρη αποτελέσματα →
-              </a>
-            </div>
+        <!-- CTA -->
+        <tr>
+          <td style="background:#0f172a;padding:0 36px 36px;">
+            <table width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="background:#2563eb;border-radius:10px;text-align:center;padding:16px;">
+                  <a href="${resultsUrl}" style="color:#ffffff;text-decoration:none;font-weight:600;font-size:15px;">
+                    Δες τα πλήρη αποτελέσματα →
+                  </a>
+                </td>
+              </tr>
+            </table>
           </td>
         </tr>
 
         <!-- Footer -->
         <tr>
-          <td style="background:#f9fafb;border-radius:0 0 16px 16px;border-top:1px solid #e5e7eb;padding:20px 36px;text-align:center;">
-            <p style="color:#9ca3af;font-size:12px;margin:0;">SiteCheck · Εργαλείο ανάλυσης website</p>
+          <td style="background:#020617;padding:20px 36px;text-align:center;border-top:1px solid #1e293b;">
+            <p style="color:#334155;font-size:12px;margin:0;">SiteCheck · Εργαλείο ανάλυσης website</p>
           </td>
         </tr>
 
