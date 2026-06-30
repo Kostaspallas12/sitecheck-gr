@@ -26,7 +26,7 @@ function loadGA(id: string) {
   document.head.appendChild(s1);
   const s2 = document.createElement("script");
   s2.id = "ga-init";
-  s2.innerHTML = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${id}');`;
+  s2.text = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${id}');`;
   document.head.appendChild(s2);
 }
 
