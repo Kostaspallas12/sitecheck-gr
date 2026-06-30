@@ -77,6 +77,11 @@ type T = {
   tabSeo: string
   tabIssues: string
   noIssuesFound: string
+  emailResultsTitle: string
+  emailResultsBtn: string
+  emailResultsSending: string
+  emailResultsSent: string
+  emailResultsError: string
 }
 
 export const translations: Record<Lang, T> = {
@@ -174,6 +179,11 @@ export const translations: Record<Lang, T> = {
     tabSeo: "SEO",
     tabIssues: "Issues",
     noIssuesFound: "No issues found — great job!",
+    emailResultsTitle: "Send results to your email",
+    emailResultsBtn: "Send",
+    emailResultsSending: "Sending...",
+    emailResultsSent: "Sent! Check your inbox.",
+    emailResultsError: "Failed to send. Try again.",
   },
   el: {
     badge: "Δωρεάν εργαλείο",
@@ -269,6 +279,11 @@ export const translations: Record<Lang, T> = {
     tabSeo: "SEO",
     tabIssues: "Προβλήματα",
     noIssuesFound: "Δεν βρέθηκαν προβλήματα — συγχαρητήρια!",
+    emailResultsTitle: "Αποστολή αποτελεσμάτων στο email σου",
+    emailResultsBtn: "Αποστολή",
+    emailResultsSending: "Αποστολή...",
+    emailResultsSent: "Στάλθηκε! Έλεγξε τα εισερχόμενά σου.",
+    emailResultsError: "Αποτυχία αποστολής. Δοκίμασε ξανά.",
   },
 }
 

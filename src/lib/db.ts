@@ -127,7 +127,9 @@ export async function findScanWithResult(scanId: string) {
   const result = resultSnap.exists ? (resultSnap.data() as ScanResultDoc) : null;
 
   const siteSnap = await db.collection("sites").doc(scanData.siteId).get();
-  const domain = siteSnap.exists ? (siteSnap.data()!.domain as string) : "unknown";
+  const siteData = siteSnap.exists ? siteSnap.data()! : null;
+  const domain = siteData ? (siteData.domain as string) : "unknown";
+  const userEmail = siteData ? (siteData.userId as string) : null;
 
   return {
     id: scanSnap.id,
@@ -135,6 +137,6 @@ export async function findScanWithResult(scanId: string) {
     status: scanData.status,
     finishedAt: scanData.finishedAt?.toDate() ?? null,
     result,
-    site: { domain },
+    site: { domain, userEmail },
   };
 }
