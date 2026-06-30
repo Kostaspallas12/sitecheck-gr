@@ -24,16 +24,6 @@ export interface SiteDoc {
   verifyMethod: string;
 }
 
-export async function findVerifiedSiteByDomain(domain: string): Promise<SiteDoc | null> {
-  const snap = await db.collection("sites")
-    .where("domain", "==", domain)
-    .where("verified", "==", true)
-    .limit(1)
-    .get();
-  if (snap.empty) return null;
-  const doc = snap.docs[0];
-  return { id: doc.id, ...(doc.data() as Omit<SiteDoc, "id">) };
-}
 
 export async function findSiteByDomainAndUser(domain: string, userId: string): Promise<SiteDoc | null> {
   const snap = await db.collection("sites")
