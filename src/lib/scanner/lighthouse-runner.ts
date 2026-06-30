@@ -48,6 +48,10 @@ export async function runLighthouse(url: string): Promise<LighthouseScores> {
       output: "json",
       logLevel: "error",
       onlyCategories: ["performance", "seo", "accessibility", "best-practices"],
+      formFactor: "desktop",
+      screenEmulation: { disabled: true },
+      throttlingMethod: "provided",
+      disableStorageReset: true,
     });
 
     if (!result?.lhr) throw new Error("Lighthouse δεν επέστρεψε αποτελέσματα");

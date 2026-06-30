@@ -26,8 +26,28 @@ export default async function ResultsPage({ params, searchParams }: PageProps) {
 
   const scan = await findScanWithResult(scanId);
 
-  if (!scan || scan.status !== "DONE" || !scan.result) notFound();
+  if (!scan) notFound();
   if (siteId && scan.siteId !== siteId) notFound();
+
+  if (scan.status === "FAILED" || !scan.result) {
+    return (
+      <main className="flex-1 flex items-center justify-center px-4">
+        <div className="text-center max-w-sm">
+          <div className="w-14 h-14 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-red-400">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5"/>
+              <path d="M12 8v4M12 16h.01" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+          </div>
+          <h1 className="text-xl font-bold text-white mb-2">Η ανάλυση απέτυχε</h1>
+          <p className="text-slate-400 text-sm mb-6">Κάτι πήγε στραβά κατά τη σάρωση. Δοκιμάστε ξανά σε λίγο.</p>
+          <a href="/" className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition">
+            ← Νέα ανάλυση
+          </a>
+        </div>
+      </main>
+    );
+  }
 
   const r = scan.result;
 
