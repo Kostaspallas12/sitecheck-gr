@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { findScanWithResult } from "@/lib/db";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const FROM = "SiteCheck <onboarding@resend.dev>";
 
 function scoreColor(score: number) {
@@ -148,6 +146,7 @@ export async function POST(
 
   const { html, subject } = buildEmail(scan.site.domain, scan, lang ?? "el");
 
+  const resend = new Resend(process.env.RESEND_API_KEY);
   const { error } = await resend.emails.send({
     from: FROM,
     to: scan.userEmail,
