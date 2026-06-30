@@ -5,6 +5,7 @@ import type { Lang } from "@/lib/i18n";
 import { getT } from "@/lib/i18n";
 import { ResultsTabs } from "@/components/ResultsTabs";
 import type { ResultsData } from "@/components/ResultsTabs";
+import { EmailResultsButton } from "@/components/EmailResultsButton";
 
 interface PageProps {
   params: Promise<{ scanId: string }>;
@@ -65,10 +66,13 @@ export default async function ResultsPage({ params, searchParams }: PageProps) {
         {/* Tabbed results */}
         <ResultsTabs data={data} />
 
-        <div className="pt-2 pb-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2 pb-6">
           <a href="/" className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition font-medium">
             {t.returnHome}
           </a>
+          {scan.userEmail && (
+            <EmailResultsButton scanId={scanId} email={scan.userEmail} />
+          )}
         </div>
 
       </div>
