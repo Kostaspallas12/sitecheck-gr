@@ -72,6 +72,11 @@ type T = {
   present: string
   missing: string
   risky: string
+  tabOverview: string
+  tabSecurity: string
+  tabSeo: string
+  tabIssues: string
+  noIssuesFound: string
 }
 
 export const translations: Record<Lang, T> = {
@@ -164,6 +169,11 @@ export const translations: Record<Lang, T> = {
     present: "Present",
     missing: "Missing",
     risky: "Risky",
+    tabOverview: "Overview",
+    tabSecurity: "Security",
+    tabSeo: "SEO",
+    tabIssues: "Issues",
+    noIssuesFound: "No issues found — great job!",
   },
   el: {
     badge: "Δωρεάν εργαλείο",
@@ -254,6 +264,11 @@ export const translations: Record<Lang, T> = {
     present: "Υπάρχει",
     missing: "Λείπει",
     risky: "Επικίνδυνο",
+    tabOverview: "Επισκόπηση",
+    tabSecurity: "Ασφάλεια",
+    tabSeo: "SEO",
+    tabIssues: "Προβλήματα",
+    noIssuesFound: "Δεν βρέθηκαν προβλήματα — συγχαρητήρια!",
   },
 }
 
