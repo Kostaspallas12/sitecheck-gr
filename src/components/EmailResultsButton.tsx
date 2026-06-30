@@ -6,17 +6,26 @@ import { useLang } from "./LangProvider";
 export function EmailResultsButton({ scanId, email }: { scanId: string; email: string }) {
   const lang = useLang();
   const [state, setState] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
 
   async function send() {
     setState("sending");
+    setErrorMsg("");
     try {
       const res = await fetch(`/api/scans/${scanId}/email`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ lang }),
       });
-      setState(res.ok ? "sent" : "error");
-    } catch {
+      if (res.ok) {
+        setState("sent");
+      } else {
+        const data = await res.json();
+        setErrorMsg(JSON.stringify(data.detail ?? data.error ?? "unknown"));
+        setState("error");
+      }
+    } catch (e) {
+      setErrorMsg(String(e));
       setState("error");
     }
   }
@@ -34,10 +43,11 @@ export function EmailResultsButton({ scanId, email }: { scanId: string; email: s
 
   if (state === "error") {
     return (
-      <div className="flex items-center gap-2.5 bg-red-500/10 border border-red-500/20 rounded-xl px-5 py-3.5 text-sm text-red-400 font-medium">
-        {lang === "el" ? "Σφάλμα αποστολής. Δοκίμασε ξανά." : "Failed to send. Try again."}
-        <button onClick={() => setState("idle")} className="underline text-xs ml-1">
-          {lang === "el" ? "Ξανά" : "Retry"}
+      <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-5 py-3.5 text-sm text-red-400">
+        <p className="font-medium mb-1">{lang === "el" ? "Σφάλμα αποστολής:" : "Send error:"}</p>
+        {errorMsg && <p className="text-xs font-mono text-red-300 break-all mb-2">{errorMsg}</p>}
+        <button onClick={() => setState("idle")} className="underline text-xs">
+          {lang === "el" ? "Δοκίμασε ξανά" : "Retry"}
         </button>
       </div>
     );
