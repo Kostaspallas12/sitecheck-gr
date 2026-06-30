@@ -62,6 +62,19 @@ export function AuthButton() {
             )}
           </div>
           <div className="border-t border-slate-800 my-1" />
+          <a href="/dashboard" className="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+            </svg>
+            {lang === "el" ? "Dashboard" : "Dashboard"}
+          </a>
+          <a href="/account" className="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+            </svg>
+            {lang === "el" ? "Ρυθμίσεις" : "Account"}
+          </a>
+          <div className="border-t border-slate-800 my-1" />
           <button
             onClick={signOut}
             className="w-full text-left px-3 py-2 text-sm text-slate-400 hover:text-red-400 hover:bg-slate-800 transition flex items-center gap-2"

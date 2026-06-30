@@ -113,6 +113,127 @@ export async function createScanResult(data: Omit<ScanResultDoc, never>) {
   await db.collection("scan_results").doc(data.scanId).set(data);
 }
 
+// ── DASHBOARD QUERIES ──────────────────────────────────────────────────────────
+
+export async function getSitesByUserId(userId: string): Promise<SiteDoc[]> {
+  const snap = await db.collection("sites")
+    .where("userId", "==", userId)
+    .orderBy("createdAt", "desc")
+    .get();
+  return snap.docs.map((doc) => ({ id: doc.id, ...(doc.data() as Omit<SiteDoc, "id">) }));
+}
+
+export interface ScanSummary {
+  scanId: string;
+  status: ScanStatus;
+  createdAt: Date;
+  finishedAt?: Date;
+  scores?: {
+    performance?: number;
+    seo?: number;
+    accessibility?: number;
+    bestPractices?: number;
+    security?: number;
+  };
+}
+
+export async function getLatestCompletedScan(siteId: string): Promise<ScanSummary | null> {
+  const snap = await db.collection("scans")
+    .where("siteId", "==", siteId)
+    .where("status", "==", "DONE")
+    .orderBy("createdAt", "desc")
+    .limit(1)
+    .get();
+  if (snap.empty) return null;
+  const doc = snap.docs[0];
+  const data = doc.data();
+  const resultSnap = await db.collection("scan_results").doc(doc.id).get();
+  const result = resultSnap.exists ? resultSnap.data()! : null;
+  return {
+    scanId: doc.id,
+    status: data.status,
+    createdAt: data.createdAt.toDate(),
+    finishedAt: data.finishedAt?.toDate(),
+    scores: result ? {
+      performance: result.performanceScore,
+      seo: result.seoScore,
+      accessibility: result.accessibilityScore,
+      bestPractices: result.bestPracticesScore,
+      security: result.securityScore,
+    } : undefined,
+  };
+}
+
+export async function getScansHistory(siteId: string, limit = 8): Promise<ScanSummary[]> {
+  const snap = await db.collection("scans")
+    .where("siteId", "==", siteId)
+    .where("status", "==", "DONE")
+    .orderBy("createdAt", "desc")
+    .limit(limit)
+    .get();
+  if (snap.empty) return [];
+  return Promise.all(snap.docs.map(async (doc) => {
+    const data = doc.data();
+    const resultSnap = await db.collection("scan_results").doc(doc.id).get();
+    const result = resultSnap.exists ? resultSnap.data()! : null;
+    return {
+      scanId: doc.id,
+      status: data.status as ScanStatus,
+      createdAt: data.createdAt.toDate(),
+      finishedAt: data.finishedAt?.toDate(),
+      scores: result ? {
+        performance: result.performanceScore,
+        seo: result.seoScore,
+        accessibility: result.accessibilityScore,
+        bestPractices: result.bestPracticesScore,
+        security: result.securityScore,
+      } : undefined,
+    };
+  }));
+}
+
+export async function getUserDoc(email: string) {
+  const snap = await db.collection("users").doc(email).get();
+  if (!snap.exists) return null;
+  return snap.data() as { email: string; paused?: boolean; weeklyRescan?: boolean; createdAt: Timestamp };
+}
+
+export async function setUserPaused(email: string, paused: boolean) {
+  await db.collection("users").doc(email).set({ paused }, { merge: true });
+}
+
+export async function setWeeklyRescan(email: string, enabled: boolean) {
+  await db.collection("users").doc(email).set({ weeklyRescan: enabled }, { merge: true });
+}
+
+export async function deleteUserData(email: string) {
+  const sitesSnap = await db.collection("sites").where("userId", "==", email).get();
+  const batch = db.batch();
+  for (const siteDoc of sitesSnap.docs) {
+    const scansSnap = await db.collection("scans").where("siteId", "==", siteDoc.id).get();
+    for (const scanDoc of scansSnap.docs) {
+      batch.delete(db.collection("scan_results").doc(scanDoc.id));
+      batch.delete(scanDoc.ref);
+    }
+    batch.delete(siteDoc.ref);
+  }
+  batch.delete(db.collection("users").doc(email));
+  await batch.commit();
+}
+
+export async function getSitesForWeeklyRescan(): Promise<Array<{ siteId: string; domain: string; userId: string }>> {
+  const usersSnap = await db.collection("users").where("weeklyRescan", "==", true).where("paused", "!=", true).get();
+  const results: Array<{ siteId: string; domain: string; userId: string }> = [];
+  for (const userDoc of usersSnap.docs) {
+    const email = userDoc.id;
+    const sitesSnap = await db.collection("sites").where("userId", "==", email).where("verified", "==", true).get();
+    for (const siteDoc of sitesSnap.docs) {
+      results.push({ siteId: siteDoc.id, domain: siteDoc.data().domain as string, userId: email });
+    }
+  }
+  return results;
+}
+
 // ── COMBINED QUERY FOR RESULTS PAGE ────────────────────────────────────────────
 
 export async function findScanWithResult(scanId: string) {
