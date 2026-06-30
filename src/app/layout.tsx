@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Space_Grotesk } from "next/font/google";
 import { cookies } from "next/headers";
 import "./globals.css";
 import type { Lang } from "@/lib/i18n";
@@ -8,9 +8,9 @@ import { LangProvider } from "@/components/LangProvider";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { CookieBanner } from "@/components/CookieBanner";
 
-const sans = Plus_Jakarta_Sans({
+const sans = Space_Grotesk({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
