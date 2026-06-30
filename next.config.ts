@@ -27,7 +27,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "font-src 'self' data:",
               "img-src 'self' data: https://www.google-analytics.com",
-              "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com",
+              "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com https://region1.analytics.google.com https://*.analytics.google.com",
             ].join("; "),
           },
         ],
