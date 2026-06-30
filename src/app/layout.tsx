@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Space_Grotesk } from "next/font/google";
+import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
 import "./globals.css";
 import type { Lang } from "@/lib/i18n";
@@ -8,9 +8,9 @@ import { LangProvider } from "@/components/LangProvider";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { CookieBanner } from "@/components/CookieBanner";
 
-const sans = Space_Grotesk({
+const sans = Inter({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
