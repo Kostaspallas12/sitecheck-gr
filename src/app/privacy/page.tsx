@@ -67,8 +67,24 @@ export default function PrivacyPage() {
         <section className="space-y-3">
           <h2 className="text-lg font-semibold text-indigo-400">6. Cookies</h2>
           <p className="text-slate-400 leading-relaxed">
-            Δεν χρησιμοποιούμε cookies tracking ή διαφημίσεων. Χρησιμοποιούμε μόνο sessionStorage
-            για τεχνικούς λόγους (προσωρινή αποθήκευση token επαλήθευσης).
+            Χρησιμοποιούμε τα παρακάτω cookies:
+          </p>
+          <div className="space-y-3">
+            <div className="bg-slate-900 rounded-xl p-4 border border-slate-800">
+              <p className="text-slate-300 font-medium text-sm mb-1">lang <span className="text-xs text-slate-500 font-normal ml-1">Λειτουργικό</span></p>
+              <p className="text-slate-400 text-sm">Αποθηκεύει την προτιμώμενη γλώσσα σου (EN/EL). Διάρκεια: 1 χρόνος. Δεν απαιτεί συναίνεση.</p>
+            </div>
+            <div className="bg-slate-900 rounded-xl p-4 border border-slate-800">
+              <p className="text-slate-300 font-medium text-sm mb-1">cookie_consent <span className="text-xs text-slate-500 font-normal ml-1">Λειτουργικό</span></p>
+              <p className="text-slate-400 text-sm">Αποθηκεύει την επιλογή σου σχετικά με τα analytics cookies. Διάρκεια: 1 χρόνος. Δεν απαιτεί συναίνεση.</p>
+            </div>
+            <div className="bg-slate-900 rounded-xl p-4 border border-slate-800">
+              <p className="text-slate-300 font-medium text-sm mb-1">_ga, _ga_* <span className="text-xs text-slate-500 font-normal ml-1">Analytics (Google Analytics 4)</span></p>
+              <p className="text-slate-400 text-sm">Χρησιμοποιούνται για ανώνυμα στατιστικά χρήσης (αριθμός επισκεπτών, σελίδες που βλέπουν). Δεν αποθηκεύουν προσωπικά στοιχεία. Διάρκεια: έως 2 χρόνια. <strong className="text-slate-300">Φορτώνονται μόνο αν αποδεχτείς τα cookies.</strong></p>
+            </div>
+          </div>
+          <p className="text-slate-400 leading-relaxed text-sm">
+            Μπορείς να αλλάξεις γνώμη ανά πάσα στιγμή — απλά κάνε refresh τη σελίδα και θα εμφανιστεί ξανά η ειδοποίηση αν διαγράψεις τα cookies του browser σου.
           </p>
         </section>
 

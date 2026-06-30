@@ -6,6 +6,7 @@ import type { Lang } from "@/lib/i18n";
 import { getT } from "@/lib/i18n";
 import { LangProvider } from "@/components/LangProvider";
 import { LanguageToggle } from "@/components/LanguageToggle";
+import { CookieBanner } from "@/components/CookieBanner";
 
 const sans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -41,6 +42,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </div>
           </header>
           <div className="flex-1">{children}</div>
+          <CookieBanner />
           <footer className="border-t border-slate-800/60 py-5 text-center text-xs text-slate-600">
             <div className="flex items-center justify-center gap-6">
               <span>© {new Date().getFullYear()} SiteCheck</span>
