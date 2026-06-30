@@ -31,38 +31,86 @@ const FEATURE_COLORS = [
 const FEATURE_DETAILS = {
   en: [
     {
-      detail: "We fetch your site's HTTP response headers and check for 7 critical security headers. For each one we verify both its presence and its correct configuration — a misconfigured header can be worse than a missing one.",
-      bullets: ["Content-Security-Policy (CSP) — prevents script injection attacks", "Strict-Transport-Security (HSTS) — forces HTTPS", "X-Frame-Options — blocks clickjacking", "X-Content-Type-Options — prevents MIME sniffing", "Referrer-Policy — controls what info browsers send", "Permissions-Policy — limits access to camera, mic, location"],
+      detail: "We check whether your site has the right protections in place against hackers and malicious attacks. These safeguards are invisible to visitors but make a big difference in keeping your site and its users safe.",
+      bullets: [
+        "Blocks hackers from injecting malicious code into your pages",
+        "Ensures your site always uses an encrypted, private connection",
+        "Prevents other sites from embedding your pages to trick your visitors",
+        "Controls what information your site reveals to third parties",
+        "Limits what the browser is allowed to do on your page",
+      ],
     },
     {
-      detail: "We launch a real headless Chrome browser running Lighthouse and load your page exactly as a visitor would — no caching, no shortcuts. We measure 6 Core Web Vitals and produce a score from 0–100.",
-      bullets: ["Largest Contentful Paint (LCP) — how fast the main content appears", "Cumulative Layout Shift (CLS) — how much the layout jumps while loading", "Total Blocking Time (TBT) — how long the page ignores user input", "Speed Index — how quickly content becomes visible", "First Contentful Paint (FCP) — time to first visible element", "Time to Interactive (TTI) — when the page becomes fully responsive"],
+      detail: "We measure how fast your site loads from a real visitor's perspective. A slow site loses visitors — most people leave if a page doesn't load within 3 seconds, and Google ranks slow sites lower.",
+      bullets: [
+        "How quickly the main content appears on screen",
+        "Whether page elements jump around while loading (causes accidental clicks)",
+        "How long the page looks ready but doesn't respond to taps or clicks",
+        "How fast something visible appears so visitors know it's working",
+        "When the page is fully usable and responds to all interactions",
+      ],
     },
     {
-      detail: "We parse your homepage HTML and check both on-page SEO elements and technical SEO factors that Google uses to rank your site in search results.",
-      bullets: ["Meta title & description — what appears in Google results", "Canonical URL — prevents duplicate content penalties", "Open Graph & Twitter Card — controls link previews on social media", "Schema.org structured data — rich snippets in search results", "sitemap.xml & robots.txt — tells Google what to crawl", "Image alt texts & crawlable links — visibility and accessibility"],
+      detail: "We check whether Google can find, understand, and properly display your site in search results — and whether your pages look good when shared on social media.",
+      bullets: [
+        "Whether your page has a title and description that show up in Google",
+        "Whether your page previews correctly when shared on social media",
+        "Whether Google can reach and index all your pages",
+        "Whether your images have descriptions so Google understands them",
+        "Whether your content is structured in a way that helps search rankings",
+      ],
     },
     {
-      detail: "We run Lighthouse's accessibility audit to check how usable your site is for people with disabilities — blind users, people with color blindness, or those using keyboard-only navigation.",
-      bullets: ["Color contrast ratio — text readable on any screen", "ARIA labels — descriptions for screen readers", "Form input labels — every field has a readable name", "Heading hierarchy (H1→H2→H3) — logical page structure", "Keyboard navigation — usable without a mouse", "Button & link names — clear purpose for assistive tech"],
+      detail: "We check whether everyone can use your site comfortably — including people with visual impairments, colour blindness, or those who navigate without a mouse.",
+      bullets: [
+        "Whether text is easy to read on all background colours",
+        "Whether forms and buttons have clear, readable labels",
+        "Whether the site works using only a keyboard",
+        "Whether the page structure is logical for people using assistive tools",
+        "Whether interactive elements clearly communicate their purpose",
+      ],
     },
   ],
   el: [
     {
-      detail: "Ελέγχουμε τα HTTP response headers του site σου και αναζητάμε 7 κρίσιμα security headers. Για κάθε ένα ελέγχουμε όχι μόνο αν υπάρχει, αλλά και αν έχει σωστή ρύθμιση — ένα λάθος ρυθμισμένο header μπορεί να είναι χειρότερο από την απουσία του.",
-      bullets: ["Content-Security-Policy (CSP) — αποτρέπει επιθέσεις script injection", "Strict-Transport-Security (HSTS) — επιβάλλει HTTPS", "X-Frame-Options — μπλοκάρει επιθέσεις clickjacking", "X-Content-Type-Options — αποτρέπει MIME sniffing", "Referrer-Policy — ελέγχει τι πληροφορίες στέλνει ο browser", "Permissions-Policy — περιορίζει πρόσβαση σε κάμερα, μικρόφωνο, τοποθεσία"],
+      detail: "Ελέγχουμε αν το site σου έχει τις σωστές προστασίες ενάντια σε χάκερς και κακόβουλες επιθέσεις. Αυτές οι ρυθμίσεις δεν φαίνονται στους επισκέπτες αλλά κάνουν μεγάλη διαφορά στην ασφάλεια.",
+      bullets: [
+        "Μπλοκάρει χάκερς που προσπαθούν να βάλουν κακόβουλο κώδικα στις σελίδες σου",
+        "Διασφαλίζει ότι το site χρησιμοποιεί πάντα κρυπτογραφημένη σύνδεση",
+        "Εμποδίζει άλλα sites να εμφανίσουν τη σελίδα σου για να εξαπατήσουν επισκέπτες",
+        "Ελέγχει τι πληροφορίες αποκαλύπτει το site σου σε τρίτους",
+        "Περιορίζει τι επιτρέπεται να κάνει ο browser στη σελίδα σου",
+      ],
     },
     {
-      detail: "Ανοίγουμε ένα πραγματικό headless Chrome browser με Lighthouse και φορτώνουμε τη σελίδα σου ακριβώς όπως ένας επισκέπτης — χωρίς cache, χωρίς συντομεύσεις. Μετράμε 6 Core Web Vitals και δίνουμε βαθμολογία 0–100.",
-      bullets: ["Largest Contentful Paint (LCP) — πόσο γρήγορα εμφανίζεται το κύριο περιεχόμενο", "Cumulative Layout Shift (CLS) — πόσο «πηδά» το layout κατά τη φόρτωση", "Total Blocking Time (TBT) — πόσο η σελίδα αγνοεί τον χρήστη", "Speed Index — πόσο γρήγορα γίνεται ορατό το περιεχόμενο", "First Contentful Paint (FCP) — χρόνος μέχρι το πρώτο ορατό στοιχείο", "Time to Interactive (TTI) — πότε η σελίδα ανταποκρίνεται πλήρως"],
+      detail: "Μετράμε πόσο γρήγορα φορτώνει το site σου ακριβώς όπως το βιώνει ένας πραγματικός επισκέπτης. Ένα αργό site χάνει κόσμο — οι περισσότεροι φεύγουν αν δεν φορτώσει μέσα σε 3 δευτερόλεπτα, και το Google το κατατάσσει χαμηλότερα.",
+      bullets: [
+        "Πόσο γρήγορα εμφανίζεται το κύριο περιεχόμενο στην οθόνη",
+        "Αν τα στοιχεία της σελίδας μετακινούνται ενώ φορτώνει (προκαλεί λάθος κλικ)",
+        "Πόση ώρα η σελίδα φαίνεται έτοιμη αλλά δεν ανταποκρίνεται σε αγγίγματα ή κλικ",
+        "Πόσο γρήγορα ο επισκέπτης βλέπει κάτι ώστε να ξέρει ότι φορτώνει",
+        "Πότε η σελίδα είναι πλήρως λειτουργική και ανταποκρίνεται σε όλες τις ενέργειες",
+      ],
     },
     {
-      detail: "Αναλύουμε το HTML της αρχικής σελίδας και ελέγχουμε on-page SEO στοιχεία αλλά και τεχνικούς παράγοντες που χρησιμοποιεί το Google για να κατατάξει το site σου στα αποτελέσματα αναζήτησης.",
-      bullets: ["Meta title & description — αυτό που εμφανίζεται στο Google", "Canonical URL — αποτρέπει penalties από διπλό περιεχόμενο", "Open Graph & Twitter Card — έλεγχος link previews στα social media", "Schema.org structured data — rich snippets στα αποτελέσματα Google", "sitemap.xml & robots.txt — λέει στο Google τι να ανιχνεύσει", "Alt texts εικόνων & crawlable links — ορατότητα και προσβασιμότητα"],
+      detail: "Ελέγχουμε αν το Google μπορεί να βρει, να καταλάβει και να εμφανίσει σωστά το site σου στα αποτελέσματα αναζήτησης — και αν οι σελίδες σου φαίνονται καλά όταν μοιράζονται στα social media.",
+      bullets: [
+        "Αν υπάρχει τίτλος και περιγραφή που εμφανίζονται στο Google",
+        "Αν η σελίδα σου προβάλλεται σωστά όταν κάποιος την μοιράζεται στα social media",
+        "Αν το Google μπορεί να φτάσει και να καταχωρίσει όλες τις σελίδες σου",
+        "Αν οι εικόνες έχουν περιγραφές ώστε να τις καταλαβαίνει το Google",
+        "Αν το περιεχόμενο είναι οργανωμένο με τρόπο που βοηθά στις κατατάξεις",
+      ],
     },
     {
-      detail: "Τρέχουμε το accessibility audit του Lighthouse για να ελέγξουμε πόσο προσβάσιμο είναι το site σου για άτομα με αναπηρίες — τυφλούς χρήστες, άτομα με αχρωματοψία, ή πλοήγηση μόνο με πληκτρολόγιο.",
-      bullets: ["Αντίθεση χρωμάτων — κείμενο ευανάγνωστο σε κάθε οθόνη", "ARIA labels — περιγραφές για screen readers", "Labels φορμών — κάθε πεδίο έχει ευανάγνωστο όνομα", "Ιεραρχία headings (H1→H2→H3) — λογική δομή σελίδας", "Πλοήγηση με πληκτρολόγιο — χρήση χωρίς ποντίκι", "Ονόματα κουμπιών & links — σαφής σκοπός για assistive tech"],
+      detail: "Ελέγχουμε αν το site σου μπορούν να το χρησιμοποιήσουν άνετα όλοι — συμπεριλαμβανομένων ατόμων με προβλήματα όρασης, αχρωματοψία ή όσων πλοηγούνται χωρίς ποντίκι.",
+      bullets: [
+        "Αν το κείμενο είναι ευανάγνωστο σε όλα τα χρώματα φόντου",
+        "Αν οι φόρμες και τα κουμπιά έχουν σαφείς, αναγνώσιμες ετικέτες",
+        "Αν το site λειτουργεί χρησιμοποιώντας μόνο το πληκτρολόγιο",
+        "Αν η δομή της σελίδας είναι λογική για άτομα που χρησιμοποιούν βοηθητικά εργαλεία",
+        "Αν τα διαδραστικά στοιχεία επικοινωνούν ξεκάθαρα τον σκοπό τους",
+      ],
     },
   ],
 };
