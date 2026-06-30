@@ -218,7 +218,7 @@ export default function HomePage() {
       {/* Feature cards */}
       <div className="mt-14 max-w-2xl w-full">
         <p className="text-xs text-slate-600 text-center mb-4">
-          {lang === "el" ? "Πάτα σε κατηγορία για να δεις πώς αναλύουμε" : "Click a category to see how we analyse it"}
+          {lang === "el" ? "Πάτα σε κατηγορία για να δεις τι ελέγχουμε" : "Click a category to see what we check"}
         </p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {t.features.map(({ title }, i) => {
@@ -228,9 +228,9 @@ export default function HomePage() {
               <button
                 key={title}
                 onClick={() => setSelected(isActive ? null : i)}
-                className={`text-left rounded-xl p-5 border transition-all ${
+                className={`text-left rounded-xl p-5 border transition-all duration-200 ${
                   isActive
-                    ? `bg-slate-900 ${colors.border} ring-1 ring-inset ${colors.border}`
+                    ? `bg-slate-900 ${colors.border}`
                     : "bg-slate-900 border-slate-800 hover:border-slate-700"
                 }`}
               >
@@ -238,30 +238,40 @@ export default function HomePage() {
                   {FEATURE_ICONS[i]}
                 </div>
                 <p className="text-sm font-semibold text-slate-100 leading-snug">{title}</p>
-                <p className={`text-xs mt-2 font-medium ${isActive ? colors.accent : "text-slate-600"}`}>
-                  {isActive
-                    ? (lang === "el" ? "▲ κλείσιμο" : "▲ close")
-                    : (lang === "el" ? "μάθε περισσότερα →" : "learn more →")}
-                </p>
+                <div className={`flex items-center gap-1 text-xs mt-2 font-medium transition-colors duration-200 ${isActive ? colors.accent : "text-slate-600"}`}>
+                  <span>{lang === "el" ? "λεπτομέρειες" : "details"}</span>
+                  <svg
+                    width="10" height="10" viewBox="0 0 10 10" fill="none"
+                    className={`transition-transform duration-300 ${isActive ? "rotate-180" : ""}`}
+                  >
+                    <path d="M2 3.5l3 3 3-3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
               </button>
             );
           })}
         </div>
 
-        {/* Detail panel */}
-        {activeDetail && activeColor && (
-          <div className={`mt-3 rounded-xl border ${activeColor.border} bg-slate-900 p-6`}>
-            <p className="text-sm text-slate-300 leading-relaxed mb-5">{activeDetail.detail}</p>
-            <ul className="space-y-2">
-              {activeDetail.bullets.map((b, i) => (
-                <li key={i} className="flex items-start gap-2.5 text-sm">
-                  <span className={`mt-0.5 shrink-0 text-xs font-bold ${activeColor.accent}`}>✓</span>
-                  <span className="text-slate-400">{b}</span>
-                </li>
-              ))}
-            </ul>
+        {/* Animated detail panel */}
+        <div className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${selected !== null ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
+          <div className="overflow-hidden">
+            <div className={`mt-3 rounded-xl border bg-slate-900 p-6 transition-opacity duration-300 ${selected !== null ? "opacity-100 " + (activeColor?.border ?? "") : "opacity-0 border-transparent"}`}>
+              {selected !== null && activeDetail && activeColor && (
+                <>
+                  <p className="text-sm text-slate-300 leading-relaxed mb-5">{activeDetail.detail}</p>
+                  <ul className="space-y-2.5">
+                    {activeDetail.bullets.map((b, i) => (
+                      <li key={i} className="flex items-start gap-2.5 text-sm">
+                        <span className={`mt-0.5 shrink-0 font-bold text-xs ${activeColor.accent}`}>✓</span>
+                        <span className="text-slate-400 leading-relaxed">{b}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </div>
           </div>
-        )}
+        </div>
       </div>
     </main>
   );
