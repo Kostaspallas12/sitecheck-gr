@@ -18,9 +18,12 @@ function ScanContent() {
   useEffect(() => {
     if (!scanId) return;
 
+    const lastStep = t.scanSteps.length - 1;
+
+    // Auto-advance through all steps except the last one
     const stepInterval = setInterval(() => {
-      setStep((s) => Math.min(s + 1, t.scanSteps.length - 1));
-    }, 4000);
+      setStep((s) => (s < lastStep - 1 ? s + 1 : s));
+    }, 9000);
 
     const pollInterval = setInterval(async () => {
       try {
@@ -29,7 +32,8 @@ function ScanContent() {
         if (data.status === "DONE") {
           clearInterval(pollInterval);
           clearInterval(stepInterval);
-          router.push(`/results/${scanId}?siteId=${siteId}`);
+          setStep(lastStep);
+          setTimeout(() => router.push(`/results/${scanId}?siteId=${siteId}`), 800);
         } else if (data.status === "FAILED") {
           clearInterval(pollInterval);
           clearInterval(stepInterval);
