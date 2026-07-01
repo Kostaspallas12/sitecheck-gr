@@ -177,38 +177,17 @@ function SiteCard({ data, lang }: { data: SiteData; lang: Lang }) {
         <ScoreHistoryChart history={data.history.map((h) => ({ createdAt: h.createdAt, scores: h.scores }))} />
       )}
 
-      {/* Uptime dots */}
+      {/* Uptime toggle */}
       {data.verified && (
-        <div className="mt-4 border-t border-slate-800 pt-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs text-slate-500">{isEl ? "Uptime Monitor" : "Uptime Monitor"}</span>
-            <button
-              onClick={toggleUptime}
-              disabled={uptimeToggling}
-              className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full transition-colors duration-200 focus:outline-none disabled:opacity-50 ${uptimeEnabled ? "bg-blue-600" : "bg-slate-700"}`}
-            >
-              <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform duration-200 mt-0.5 ${uptimeEnabled ? "translate-x-4" : "translate-x-0.5"}`} />
-            </button>
-          </div>
-          {uptimeEnabled && data.uptimeChecks.length > 0 && (
-            <>
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-xs text-slate-600">{isEl ? "Τελευταίοι έλεγχοι" : "Recent checks"}</span>
-                <span className="text-xs text-slate-500">
-                  {Math.round((data.uptimeChecks.filter((c) => c.status === "up").length / data.uptimeChecks.length) * 100)}%
-                </span>
-              </div>
-              <div className="flex gap-0.5 flex-wrap">
-                {[...data.uptimeChecks].reverse().map((c, i) => (
-                  <div
-                    key={i}
-                    title={`${c.status === "up" ? "✓" : "✗"} ${timeAgo(c.checkedAt, lang)}`}
-                    className={`w-2.5 h-5 rounded-sm ${c.status === "up" ? "bg-green-500/70" : "bg-red-500/80"}`}
-                  />
-                ))}
-              </div>
-            </>
-          )}
+        <div className="mt-4 border-t border-slate-800 pt-4 flex items-center justify-between">
+          <span className="text-xs text-slate-500">{isEl ? "Uptime Monitor" : "Uptime Monitor"}</span>
+          <button
+            onClick={toggleUptime}
+            disabled={uptimeToggling}
+            className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full transition-colors duration-200 focus:outline-none disabled:opacity-50 ${uptimeEnabled ? "bg-blue-600" : "bg-slate-700"}`}
+          >
+            <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform duration-200 mt-0.5 ${uptimeEnabled ? "translate-x-4" : "translate-x-0.5"}`} />
+          </button>
         </div>
       )}
 
