@@ -42,8 +42,10 @@ export function AuthButton() {
         onClick={() => setOpen((o) => !o)}
         className="flex items-center gap-2 text-sm text-slate-300 hover:text-white transition rounded-lg px-2 py-1.5 hover:bg-slate-800"
       >
-        <div className="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs shrink-0">
-          {initial}
+        <div className="w-7 h-7 bg-blue-600 rounded-full overflow-hidden flex items-center justify-center text-white font-bold text-xs shrink-0">
+          {user.photoURL
+            ? <img src={user.photoURL} alt="" className="w-full h-full object-cover" />
+            : initial}
         </div>
         <span className="hidden sm:block max-w-[140px] truncate">
           {user.displayName ?? user.email}
