@@ -15,9 +15,6 @@ export async function POST(
   }
 
   const user = await getSessionUser();
-  if (!user?.email) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
 
   const { siteId } = await params;
   const site = await findSiteById(siteId);
@@ -26,7 +23,8 @@ export async function POST(
     return NextResponse.json({ error: "Site δεν βρέθηκε" }, { status: 404 });
   }
 
-  if (site.userId !== user.email) {
+  // If logged in, must own the site
+  if (user?.email && site.userId !== user.email) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
