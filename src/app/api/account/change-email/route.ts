@@ -7,7 +7,8 @@ export async function POST(req: NextRequest) {
   if (!user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { newEmail } = await req.json();
-  if (!newEmail || newEmail === user.email) {
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  if (!newEmail || newEmail === user.email || !EMAIL_RE.test(newEmail)) {
     return NextResponse.json({ error: "Invalid email" }, { status: 400 });
   }
 
