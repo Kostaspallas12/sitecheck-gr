@@ -20,6 +20,9 @@ const FEATURE_ICONS = [
     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
     <circle cx="12" cy="12" r="3"/>
   </svg>,
+  <svg key="uptime" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+  </svg>,
 ];
 
 const FEATURE_COLORS = [
@@ -27,6 +30,7 @@ const FEATURE_COLORS = [
   { icon: "text-amber-400 bg-amber-500/10 border border-amber-500/20", border: "border-amber-500/50", accent: "text-amber-400" },
   { icon: "text-emerald-400 bg-emerald-500/10 border border-emerald-500/20", border: "border-emerald-500/50", accent: "text-emerald-400" },
   { icon: "text-violet-400 bg-violet-500/10 border border-violet-500/20", border: "border-violet-500/50", accent: "text-violet-400" },
+  { icon: "text-cyan-400 bg-cyan-500/10 border border-cyan-500/20", border: "border-cyan-500/50", accent: "text-cyan-400" },
 ];
 
 const FEATURE_DETAILS = {
@@ -71,6 +75,16 @@ const FEATURE_DETAILS = {
         "Whether interactive elements clearly communicate their purpose",
       ],
     },
+    {
+      detail: "We monitor your site every 5 minutes, around the clock. The moment it goes down, you get an instant email alert — and another one when it comes back up.",
+      bullets: [
+        "Automatic checks every 5 minutes, 24/7",
+        "Instant email alert when your site goes offline",
+        "Recovery notification when your site comes back online",
+        "Uptime history visible in your dashboard",
+        "Response time tracking so you can spot slowdowns",
+      ],
+    },
   ],
   el: [
     {
@@ -111,6 +125,16 @@ const FEATURE_DETAILS = {
         "Αν το site λειτουργεί χρησιμοποιώντας μόνο το πληκτρολόγιο",
         "Αν η δομή της σελίδας είναι λογική για άτομα που χρησιμοποιούν βοηθητικά εργαλεία",
         "Αν τα διαδραστικά στοιχεία επικοινωνούν ξεκάθαρα τον σκοπό τους",
+      ],
+    },
+    {
+      detail: "Παρακολουθούμε το site σου κάθε 5 λεπτά, όλο το 24ωρο. Μόλις πέσει, παίρνεις αμέσως email — και άλλο ένα μόλις επανέλθει.",
+      bullets: [
+        "Αυτόματος έλεγχος κάθε 5 λεπτά, 24/7",
+        "Άμεση ειδοποίηση email όταν το site σου είναι εκτός λειτουργίας",
+        "Ειδοποίηση αποκατάστασης όταν επανέλθει online",
+        "Ιστορικό uptime ορατό στο dashboard σου",
+        "Παρακολούθηση χρόνου απόκρισης για να εντοπίσεις επιβραδύνσεις",
       ],
     },
   ],
@@ -230,7 +254,7 @@ export default function HomePage() {
 
       {/* Feature cards */}
       <div className="mt-10 max-w-2xl w-full">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {t.features.map(({ title }, i) => {
             const isActive = selected === i;
             const colors = FEATURE_COLORS[i];

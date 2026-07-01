@@ -268,7 +268,7 @@ export async function getAllVerifiedSites() {
         id: doc.id,
         domain: data.domain as string,
         userId: data.userId as string,
-        uptimeMonitoring: (data.uptimeMonitoring as boolean | undefined) ?? true,
+        uptimeMonitoring: (data.uptimeMonitoring as boolean | undefined) ?? false,
         uptimeStatus: (data.uptimeStatus as "up" | "down" | undefined) ?? null,
         downtimeSince: data.downtimeSince ? (data.downtimeSince as Timestamp).toDate() : null,
       };

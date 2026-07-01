@@ -40,7 +40,7 @@ export default async function DashboardPage() {
           status: c.status,
           checkedAt: c.checkedAt.toISOString(),
         })),
-        uptimeMonitoring: site.uptimeMonitoring ?? true,
+        uptimeMonitoring: site.uptimeMonitoring ?? false,
         latest: latest
           ? { scanId: latest.scanId, createdAt: latest.createdAt.toISOString(), scores: latest.scores }
           : null,
