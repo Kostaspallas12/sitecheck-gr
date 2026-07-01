@@ -19,12 +19,22 @@ interface ScanEntry {
   scores?: ScoreSet;
 }
 
+interface UptimeCheck {
+  status: "up" | "down";
+  checkedAt: string;
+}
+
 interface SiteData {
   id: string;
   domain: string;
   verified: boolean;
   latest: ScanEntry | null;
   history: ScanEntry[];
+  uptimeStatus: "up" | "down" | null;
+  uptimeResponseTime: number | null;
+  uptimeCheckedAt: string | null;
+  downtimeSince: string | null;
+  uptimeChecks: UptimeCheck[];
 }
 
 function scoreColor(v: number) {
@@ -98,9 +108,19 @@ function SiteCard({ data, lang }: { data: SiteData; lang: Lang }) {
               </span>
             )}
           </div>
-          {data.latest && (
-            <p className="text-slate-500 text-xs">{isEl ? "Τελευταία ανάλυση:" : "Last scan:"} {timeAgo(data.latest.createdAt, lang)}</p>
-          )}
+          <div className="flex items-center gap-3 mt-1">
+            {data.latest && (
+              <p className="text-slate-500 text-xs">{isEl ? "Τελευταία ανάλυση:" : "Last scan:"} {timeAgo(data.latest.createdAt, lang)}</p>
+            )}
+            {data.uptimeStatus && (
+              <span className={`inline-flex items-center gap-1 text-xs font-medium ${data.uptimeStatus === "up" ? "text-green-400" : "text-red-400"}`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${data.uptimeStatus === "up" ? "bg-green-400" : "bg-red-400 animate-pulse"}`} />
+                {data.uptimeStatus === "up"
+                  ? `Online${data.uptimeResponseTime ? ` · ${data.uptimeResponseTime}ms` : ""}`
+                  : (isEl ? "Εκτός λειτουργίας" : "Offline")}
+              </span>
+            )}
+          </div>
         </div>
         {overall !== null && (
           <div className={`text-2xl font-black ${scoreColor(overall)} shrink-0`}>{overall}</div>
@@ -137,6 +157,27 @@ function SiteCard({ data, lang }: { data: SiteData; lang: Lang }) {
       {/* Score history chart */}
       {data.history.length >= 2 && (
         <ScoreHistoryChart history={data.history.map((h) => ({ createdAt: h.createdAt, scores: h.scores }))} />
+      )}
+
+      {/* Uptime dots */}
+      {data.uptimeChecks.length > 0 && (
+        <div className="mt-4 border-t border-slate-800 pt-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs text-slate-500">{isEl ? "Uptime (τελευταίοι έλεγχοι)" : "Uptime (recent checks)"}</span>
+            <span className="text-xs text-slate-500">
+              {Math.round((data.uptimeChecks.filter((c) => c.status === "up").length / data.uptimeChecks.length) * 100)}%
+            </span>
+          </div>
+          <div className="flex gap-0.5 flex-wrap">
+            {[...data.uptimeChecks].reverse().map((c, i) => (
+              <div
+                key={i}
+                title={`${c.status === "up" ? "✓" : "✗"} ${timeAgo(c.checkedAt, lang)}`}
+                className={`w-2.5 h-5 rounded-sm ${c.status === "up" ? "bg-green-500/70" : "bg-red-500/80"}`}
+              />
+            ))}
+          </div>
+        </div>
       )}
 
       {/* Actions */}

@@ -22,6 +22,11 @@ export interface SiteDoc {
   verified: boolean;
   verifyToken: string;
   verifyMethod: string;
+  // uptime
+  uptimeStatus?: "up" | "down";
+  uptimeCheckedAt?: Timestamp;
+  uptimeResponseTime?: number;
+  downtimeSince?: Timestamp;
 }
 
 
@@ -249,6 +254,69 @@ export async function getSitesForWeeklyRescan(): Promise<Array<{ siteId: string;
     }
   }
   return results;
+}
+
+// ── UPTIME MONITORING ──────────────────────────────────────────────────────────
+
+export async function getAllVerifiedSites() {
+  const snap = await db.collection("sites").where("verified", "==", true).get();
+  return snap.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      domain: data.domain as string,
+      userId: data.userId as string,
+      uptimeStatus: (data.uptimeStatus as "up" | "down" | undefined) ?? null,
+      downtimeSince: data.downtimeSince ? (data.downtimeSince as Timestamp).toDate() : null,
+    };
+  });
+}
+
+export async function saveUptimeCheck(
+  siteId: string,
+  status: "up" | "down",
+  responseTime: number,
+  statusCode: number | null
+) {
+  await db.collection("uptime_checks").add({
+    siteId,
+    status,
+    responseTime,
+    statusCode,
+    checkedAt: Timestamp.now(),
+  });
+}
+
+export async function updateSiteUptimeStatus(
+  siteId: string,
+  status: "up" | "down",
+  responseTime: number,
+  downtimeSince: Date | null
+) {
+  await db.collection("sites").doc(siteId).update({
+    uptimeStatus: status,
+    uptimeCheckedAt: Timestamp.now(),
+    uptimeResponseTime: responseTime,
+    downtimeSince: downtimeSince ? Timestamp.fromDate(downtimeSince) : null,
+  });
+}
+
+export async function getUptimeChecks(siteId: string, limit = 24) {
+  const snap = await db.collection("uptime_checks")
+    .where("siteId", "==", siteId)
+    .get();
+  if (snap.empty) return [];
+  return snap.docs
+    .map((doc) => {
+      const data = doc.data();
+      return {
+        status: data.status as "up" | "down",
+        responseTime: data.responseTime as number,
+        checkedAt: (data.checkedAt as Timestamp).toDate(),
+      };
+    })
+    .sort((a, b) => b.checkedAt.getTime() - a.checkedAt.getTime())
+    .slice(0, limit);
 }
 
 // ── COMBINED QUERY FOR RESULTS PAGE ────────────────────────────────────────────

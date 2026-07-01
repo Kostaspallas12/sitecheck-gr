@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { getSessionUser } from "@/lib/auth-server";
-import { getSitesByUserId, getLatestCompletedScan, getScansHistory } from "@/lib/db";
+import { getSitesByUserId, getLatestCompletedScan, getScansHistory, getUptimeChecks } from "@/lib/db";
 import type { Lang } from "@/lib/i18n";
 import { DashboardClient } from "./DashboardClient";
 
@@ -16,27 +16,32 @@ export default async function DashboardPage() {
 
   const sitesWithData = await Promise.all(
     sites.map(async (site) => {
-      const [latest, history] = await Promise.all([
+      const [latest, history, uptimeChecks] = await Promise.all([
         getLatestCompletedScan(site.id),
         getScansHistory(site.id, 6),
+        getUptimeChecks(site.id, 24),
       ]);
-      return { site, latest, history };
+      return { site, latest, history, uptimeChecks };
     })
   );
 
   return (
     <DashboardClient
       user={{ name: user.displayName, email: user.email }}
-      sites={sitesWithData.map(({ site, latest, history }) => ({
+      sites={sitesWithData.map(({ site, latest, history, uptimeChecks }) => ({
         id: site.id,
         domain: site.domain,
         verified: site.verified,
+        uptimeStatus: site.uptimeStatus ?? null,
+        uptimeResponseTime: site.uptimeResponseTime ?? null,
+        uptimeCheckedAt: site.uptimeCheckedAt ? site.uptimeCheckedAt.toDate().toISOString() : null,
+        downtimeSince: site.downtimeSince ? site.downtimeSince.toDate().toISOString() : null,
+        uptimeChecks: uptimeChecks.map((c) => ({
+          status: c.status,
+          checkedAt: c.checkedAt.toISOString(),
+        })),
         latest: latest
-          ? {
-              scanId: latest.scanId,
-              createdAt: latest.createdAt.toISOString(),
-              scores: latest.scores,
-            }
+          ? { scanId: latest.scanId, createdAt: latest.createdAt.toISOString(), scores: latest.scores }
           : null,
         history: history.map((h) => ({
           scanId: h.scanId,
