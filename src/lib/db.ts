@@ -23,6 +23,7 @@ export interface SiteDoc {
   verifyToken: string;
   verifyMethod: string;
   // uptime
+  uptimeMonitoring?: boolean;
   uptimeStatus?: "up" | "down";
   uptimeCheckedAt?: Timestamp;
   uptimeResponseTime?: number;
@@ -58,7 +59,7 @@ export async function createSite(data: {
   return { id: ref.id, ...data, verified: false };
 }
 
-export async function updateSite(id: string, data: Partial<Pick<SiteDoc, "verified" | "verifyToken" | "verifyMethod">>) {
+export async function updateSite(id: string, data: Partial<Pick<SiteDoc, "verified" | "verifyToken" | "verifyMethod" | "uptimeMonitoring">>) {
   await db.collection("sites").doc(id).update(data);
 }
 
@@ -260,16 +261,19 @@ export async function getSitesForWeeklyRescan(): Promise<Array<{ siteId: string;
 
 export async function getAllVerifiedSites() {
   const snap = await db.collection("sites").where("verified", "==", true).get();
-  return snap.docs.map((doc) => {
-    const data = doc.data();
-    return {
-      id: doc.id,
-      domain: data.domain as string,
-      userId: data.userId as string,
-      uptimeStatus: (data.uptimeStatus as "up" | "down" | undefined) ?? null,
-      downtimeSince: data.downtimeSince ? (data.downtimeSince as Timestamp).toDate() : null,
-    };
-  });
+  return snap.docs
+    .map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        domain: data.domain as string,
+        userId: data.userId as string,
+        uptimeMonitoring: (data.uptimeMonitoring as boolean | undefined) ?? true,
+        uptimeStatus: (data.uptimeStatus as "up" | "down" | undefined) ?? null,
+        downtimeSince: data.downtimeSince ? (data.downtimeSince as Timestamp).toDate() : null,
+      };
+    })
+    .filter((s) => s.uptimeMonitoring !== false);
 }
 
 export async function saveUptimeCheck(
