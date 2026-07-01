@@ -5,7 +5,7 @@ export default function PrivacyPage() {
 
         <div>
           <h1 className="text-3xl font-bold mb-2">Πολιτική Απορρήτου</h1>
-          <p className="text-slate-500 text-sm">Τελευταία ενημέρωση: Ιούνιος 2026</p>
+          <p className="text-slate-500 text-sm">Τελευταία ενημέρωση: Ιούλιος 2026</p>
         </div>
 
         <section className="space-y-3">
@@ -19,9 +19,10 @@ export default function PrivacyPage() {
         <section className="space-y-3">
           <h2 className="text-lg font-semibold text-indigo-400">2. Τι δεδομένα συλλέγουμε</h2>
           <ul className="text-slate-400 leading-relaxed space-y-2 list-disc list-inside">
-            <li><strong className="text-slate-300">Email:</strong> Το χρησιμοποιούμε μόνο για να συνδέσουμε τα scans σου με τον λογαριασμό σου.</li>
-            <li><strong className="text-slate-300">Domain:</strong> Το domain που καταχωρείς για ανάλυση.</li>
+            <li><strong className="text-slate-300">Email:</strong> Το χρησιμοποιούμε για να συνδέσουμε τα scans σου με τον λογαριασμό σου και για ειδοποιήσεις.</li>
+            <li><strong className="text-slate-300">Domain:</strong> Το domain που καταχωρείς για ανάλυση και παρακολούθηση uptime.</li>
             <li><strong className="text-slate-300">Αποτελέσματα scan:</strong> Αποθηκεύονται για να μπορείς να τα δεις αργότερα.</li>
+            <li><strong className="text-slate-300">Όνομα & φωτογραφία προφίλ:</strong> Προαιρετικά στοιχεία που μπορείς να ορίσεις στις ρυθμίσεις λογαριασμού. Η φωτογραφία αποθηκεύεται κρυπτογραφημένα στη βάση δεδομένων μας.</li>
           </ul>
         </section>
 
@@ -30,6 +31,9 @@ export default function PrivacyPage() {
           <p className="text-slate-400 leading-relaxed">
             Τα δεδομένα σου χρησιμοποιούνται αποκλειστικά για την παροχή της υπηρεσίας. Δεν τα πουλάμε,
             δεν τα μοιραζόμαστε με τρίτους και δεν τα χρησιμοποιούμε για διαφήμιση.
+          </p>
+          <p className="text-slate-400 leading-relaxed">
+            Στέλνουμε email αποκλειστικά για: αποτελέσματα ανάλυσης, ειδοποιήσεις uptime (αν το site σου πέσει ή επανέλθει), και εβδομαδιαία επανανάλυση αν έχεις ενεργοποιήσει αυτή την επιλογή.
           </p>
         </section>
 
@@ -52,8 +56,8 @@ export default function PrivacyPage() {
           <h2 className="text-lg font-semibold text-indigo-400">5. Τα δικαιώματά σου (GDPR)</h2>
           <ul className="text-slate-400 leading-relaxed space-y-2 list-disc list-inside">
             <li>Δικαίωμα πρόσβασης στα δεδομένα σου</li>
-            <li>Δικαίωμα διόρθωσης ανακριβών δεδομένων</li>
-            <li>Δικαίωμα διαγραφής ("δικαίωμα στη λήθη")</li>
+            <li>Δικαίωμα διόρθωσης — μπορείς να αλλάξεις email, κωδικό, όνομα και φωτογραφία απευθείας από τις <strong className="text-slate-300">Ρυθμίσεις λογαριασμού</strong></li>
+            <li>Δικαίωμα διαγραφής ("δικαίωμα στη λήθη") — διαθέσιμο από τις Ρυθμίσεις λογαριασμού</li>
             <li>Δικαίωμα φορητότητας δεδομένων</li>
           </ul>
           <p className="text-slate-400 leading-relaxed">
