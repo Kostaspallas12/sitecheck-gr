@@ -121,7 +121,7 @@ export async function getSitesByUserId(userId: string): Promise<SiteDoc[]> {
     .get();
   return snap.docs
     .map((doc) => ({ id: doc.id, ...(doc.data() as Omit<SiteDoc, "id">) }))
-    .sort((a, b) => 0); // order doesn't matter for display
+    .sort(() => 0); // order doesn't matter for display
 }
 
 export interface ScanSummary {
@@ -220,6 +220,21 @@ export async function deleteUserData(email: string) {
     batch.delete(siteDoc.ref);
   }
   batch.delete(db.collection("users").doc(email));
+  await batch.commit();
+}
+
+export async function migrateUserEmail(oldEmail: string, newEmail: string) {
+  const batch = db.batch();
+  const oldUserSnap = await db.collection("users").doc(oldEmail).get();
+  if (oldUserSnap.exists) {
+    const data = oldUserSnap.data()!;
+    batch.set(db.collection("users").doc(newEmail), { ...data, email: newEmail });
+    batch.delete(db.collection("users").doc(oldEmail));
+  }
+  const sitesSnap = await db.collection("sites").where("userId", "==", oldEmail).get();
+  for (const siteDoc of sitesSnap.docs) {
+    batch.update(siteDoc.ref, { userId: newEmail });
+  }
   await batch.commit();
 }
 

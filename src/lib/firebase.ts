@@ -6,7 +6,10 @@ function init() {
   if (getApps().length > 0) return;
 
   if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-    initializeApp({ credential: cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)) });
+    initializeApp({
+      credential: cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)),
+      storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+    });
   } else {
     initializeApp();
   }
