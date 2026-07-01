@@ -253,8 +253,8 @@ export default function HomePage() {
       </form>
 
       {/* Feature cards */}
-      <div className="mt-10 max-w-2xl w-full">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+      <div className="mt-10 max-w-4xl w-full">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {t.features.map(({ title }, i) => {
             const isActive = selected === i;
             const colors = FEATURE_COLORS[i];
