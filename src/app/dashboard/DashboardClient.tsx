@@ -153,9 +153,16 @@ function SiteCard({ data, lang }: { data: SiteData; lang: Lang }) {
           <button
             onClick={rescan}
             disabled={loading}
-            className="text-xs px-3 py-1.5 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 hover:text-blue-300 border border-blue-500/20 rounded-lg transition disabled:opacity-50"
+            className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition disabled:opacity-50 font-medium"
           >
-            {loading ? "..." : (isEl ? "Νέα ανάλυση" : "Re-scan")}
+            {loading ? "..." : (
+              <>
+                <svg width="11" height="11" viewBox="0 0 14 14" fill="none">
+                  <path d="M7 1v12M1 7h12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+                </svg>
+                {isEl ? "Νέα ανάλυση" : "New scan"}
+              </>
+            )}
           </button>
         )}
         {!data.verified && (

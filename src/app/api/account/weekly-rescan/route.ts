@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth-server";
-import { setWeeklyRescan } from "@/lib/db";
+import { setWeeklyRescan, getUserDoc } from "@/lib/db";
+
+export async function GET() {
+  const user = await getSessionUser();
+  if (!user || !user.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const doc = await getUserDoc(user.email);
+  return NextResponse.json({ enabled: !!doc?.weeklyRescan });
+}
 
 export async function POST(req: NextRequest) {
   const user = await getSessionUser();

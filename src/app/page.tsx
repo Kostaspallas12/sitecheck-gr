@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLang } from "@/components/LangProvider";
 import { getT } from "@/lib/i18n";
@@ -127,8 +127,32 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [selected, setSelected] = useState<number | null>(null);
+  const [notifEnabled, setNotifEnabled] = useState<boolean | null>(null);
+  const [notifLoading, setNotifLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  useEffect(() => {
+    if (!user) return;
+    fetch("/api/account/weekly-rescan")
+      .then((r) => r.json())
+      .then((d) => setNotifEnabled(!!d.enabled))
+      .catch(() => {});
+  }, [user]);
+
+  async function toggleNotif() {
+    if (!user) { router.push("/login"); return; }
+    setNotifLoading(true);
+    const next = !notifEnabled;
+    try {
+      await fetch("/api/account/weekly-rescan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ enabled: next }),
+      });
+      setNotifEnabled(next);
+    } finally { setNotifLoading(false); }
+  }
+
+  async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -229,11 +253,37 @@ export default function HomePage() {
         </button>
       </form>
 
+      {/* Notifications CTA */}
+      <div className="w-full max-w-sm mt-3">
+        <button
+          onClick={toggleNotif}
+          disabled={notifLoading}
+          className={`w-full flex items-center justify-center gap-2 text-sm py-2.5 rounded-xl border transition font-medium disabled:opacity-50 ${
+            notifEnabled
+              ? "bg-blue-600/10 border-blue-500/30 text-blue-400 hover:bg-blue-600/20"
+              : "bg-slate-900 border-slate-700/60 text-slate-400 hover:text-white hover:border-slate-600"
+          }`}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>
+            {notifEnabled && <line x1="1" y1="1" x2="23" y2="23" stroke="none"/>}
+          </svg>
+          {notifEnabled
+            ? (lang === "el" ? "Ειδοποιήσεις ενεργές" : "Notifications on")
+            : (lang === "el" ? "Ειδοποίησέ με για αλλαγές" : "Notify me of changes")}
+          {notifEnabled && (
+            <span className="text-xs bg-blue-500 text-white rounded-full px-1.5 py-0.5 leading-none">✓</span>
+          )}
+        </button>
+        {!user && (
+          <p className="text-center text-xs text-slate-600 mt-1.5">
+            {lang === "el" ? "Απαιτείται σύνδεση" : "Requires sign in"}
+          </p>
+        )}
+      </div>
+
       {/* Feature cards */}
-      <div className="mt-14 max-w-2xl w-full">
-        <p className="text-xs text-slate-600 text-center mb-4">
-          {lang === "el" ? "Πάτα σε κατηγορία για να δεις τι ελέγχουμε" : "Click a category to see what we check"}
-        </p>
+      <div className="mt-10 max-w-2xl w-full">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {t.features.map(({ title }, i) => {
             const isActive = selected === i;
