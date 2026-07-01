@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { findSiteById, findRunningScan, createScan, updateScan, createScanResult } from "@/lib/db";
 import { runFullScan } from "@/lib/scanner";
 import { checkRateLimit, getClientIP } from "@/lib/security/rate-limiter";
+import { getSessionUser } from "@/lib/auth-server";
 
 export const maxDuration = 300;
 
@@ -13,11 +14,20 @@ export async function POST(
     return NextResponse.json({ error: "Υπερβολικά πολλά αιτήματα. Δοκιμάστε σε λίγο." }, { status: 429 });
   }
 
+  const user = await getSessionUser();
+  if (!user?.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { siteId } = await params;
   const site = await findSiteById(siteId);
 
   if (!site) {
     return NextResponse.json({ error: "Site δεν βρέθηκε" }, { status: 404 });
+  }
+
+  if (site.userId !== user.email) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   if (!site.verified) {
