@@ -20,16 +20,31 @@ function VerifyContent() {
   const [verified, setVerified] = useState(false);
 
   useEffect(() => {
-    if (!siteId) return;
+    if (!siteId) { setReady(true); return; }
+
+    // Try sessionStorage first (normal flow from homepage)
     try {
       const stored = sessionStorage.getItem(`site:${siteId}`);
       if (stored) {
         const { token: tk, domain: d } = JSON.parse(stored);
         setToken(tk);
         setDomain(d);
+        setReady(true);
+        return;
       }
     } catch { /* ignore */ }
-    setReady(true);
+
+    // Fallback: fetch from API (e.g. when coming from dashboard)
+    fetch(`/api/sites/${siteId}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.verifyToken) {
+          setToken(data.verifyToken);
+          setDomain(data.domain ?? "");
+        }
+      })
+      .catch(() => {})
+      .finally(() => setReady(true));
   }, [siteId]);
 
   async function handleVerify() {

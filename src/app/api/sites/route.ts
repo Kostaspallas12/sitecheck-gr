@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { findOrCreateUser, findSiteByDomainAndUser, createSite, updateSite } from "@/lib/db";
 import { randomUUID } from "crypto";
 import { checkRateLimit, getClientIP } from "@/lib/security/rate-limiter";
+import { getSessionUser } from "@/lib/auth-server";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -11,8 +12,12 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { domain, email } = await req.json();
+    const { domain, email: formEmail } = await req.json();
     const verifyMethod = "meta";
+
+    // If logged in, always use the authenticated email — ignores whatever was in the form
+    const sessionUser = await getSessionUser();
+    const email = sessionUser?.email ?? formEmail;
 
     if (!domain || !email) {
       return NextResponse.json({ error: "domain και email είναι υποχρεωτικά" }, { status: 400 });
