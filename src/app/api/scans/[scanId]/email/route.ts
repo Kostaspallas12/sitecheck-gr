@@ -27,8 +27,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ sca
       { label: "Security", value: r.securityScore ?? 0 },
     ];
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
-      || (process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : new URL(req.url).origin);
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || new URL(req.url).origin;
     const resultsUrl = `${baseUrl}/results/${scanId}`;
 
     const apiKey = process.env.BREVO_API_KEY;

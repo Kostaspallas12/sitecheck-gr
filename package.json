@@ -12,29 +12,20 @@
     "dev": "next dev",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint",
-    "worker": "ts-node -r tsconfig-paths/register src/workers/scanner-worker.ts",
-    "db:push": "prisma db push",
-    "db:generate": "prisma generate"
+    "lint": "eslint"
   },
   "dependencies": {
     "@sparticuz/chromium": "^149.0.0",
     "axios": "^1.18.1",
     "bull": "^4.16.5",
-    "cheerio": "^1.2.0",
     "firebase": "^12.15.0",
     "firebase-admin": "^14.1.0",
-    "ioredis": "^5.11.1",
     "lighthouse": "^13.4.0",
     "next": "16.2.9",
-    "nodemailer": "^9.0.1",
-    "pg": "^8.22.0",
     "puppeteer": "^25.2.1",
     "puppeteer-core": "^25.2.1",
     "react": "19.2.4",
-    "react-dom": "19.2.4",
-    "resend": "^6.16.0",
-    "uuid": "^14.0.1"
+    "react-dom": "19.2.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
