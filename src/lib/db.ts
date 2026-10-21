@@ -75,15 +75,21 @@ export interface ScanDoc {
   finishedAt?: Timestamp;
 }
 
+// Scans run inside a function capped at 300s, so anything older than this was killed mid-run
+const STALE_SCAN_MS = 6 * 60 * 1000;
+
 export async function findRunningScan(siteId: string): Promise<Pick<ScanDoc, "id" | "status"> | null> {
   const snap = await db.collection("scans")
     .where("siteId", "==", siteId)
     .where("status", "in", ["PENDING", "RUNNING"])
-    .limit(1)
     .get();
-  if (snap.empty) return null;
-  const doc = snap.docs[0];
-  return { id: doc.id, status: doc.data().status };
+  const cutoff = Date.now() - STALE_SCAN_MS;
+  for (const doc of snap.docs) {
+    const createdAt = (doc.data().createdAt as Timestamp | undefined)?.toMillis() ?? 0;
+    if (createdAt >= cutoff) return { id: doc.id, status: doc.data().status };
+    await doc.ref.update({ status: "FAILED", finishedAt: Timestamp.now() });
+  }
+  return null;
 }
 
 export async function createScan(siteId: string): Promise<{ id: string }> {
