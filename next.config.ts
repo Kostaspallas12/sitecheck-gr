@@ -8,7 +8,7 @@ const scannerFiles = [
   "./node_modules/lighthouse/shared/**",
   ...["axe-core", "csp_evaluator", "http-link-header", "jpeg-js", "robots-parser",
     "speedline-core", "image-ssim", "chrome-launcher", "escape-string-regexp",
-    "is-wsl", "is-docker", "typed-query-selector"].map((p) => `./node_modules/${p}/**`),
+    "is-wsl", "is-docker", "typed-query-selector", "js-library-detector"].map((p) => `./node_modules/${p}/**`),
 ];
 
 const nextConfig: NextConfig = {

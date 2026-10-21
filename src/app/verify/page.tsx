@@ -67,9 +67,15 @@ function VerifyContent() {
   }
 
   async function triggerScan() {
-    const res = await fetch(`/api/sites/${siteId}/scan`, { method: "POST" });
-    const data = await res.json();
-    if (data.scanId) router.push(`/scan?scanId=${data.scanId}&siteId=${siteId}`);
+    try {
+      const res = await fetch(`/api/sites/${siteId}/scan`, { method: "POST" });
+      const data = await res.json();
+      if (data.scanId) router.push(`/scan?scanId=${data.scanId}&siteId=${siteId}`);
+      else { setVerified(false); setError(data.error ?? t.connFailed); }
+    } catch {
+      setVerified(false);
+      setError(t.connFailed);
+    }
   }
 
   if (!ready) return null;
