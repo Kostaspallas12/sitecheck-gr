@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useLang } from "./LangProvider";
 
-const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "G-BFLJY5F8Z4";
 
 function getCookieValue(name: string): string | undefined {
   return document.cookie

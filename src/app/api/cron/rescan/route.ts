@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
             const newAvg = Math.round((result.scores.performance + result.scores.seo + result.scores.accessibility + result.scores.bestPractices + result.scores.security) / 5);
             const prevAvg = Math.round(((prev.scores.performance ?? 0) + (prev.scores.seo ?? 0) + (prev.scores.accessibility ?? 0) + (prev.scores.bestPractices ?? 0) + (prev.scores.security ?? 0)) / 5);
             if (Math.abs(newAvg - prevAvg) >= 5) {
-              const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || (process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : "");
+              const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || (process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : "https://sitecheck-gr.vercel.app");
               const apiKey = process.env.BREVO_API_KEY;
               const senderEmail = process.env.BREVO_SENDER_EMAIL;
               if (apiKey && senderEmail && baseUrl) {
