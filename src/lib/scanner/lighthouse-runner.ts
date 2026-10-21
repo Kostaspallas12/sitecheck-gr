@@ -55,6 +55,20 @@ export async function runLighthouse(url: string): Promise<LighthouseScores> {
 
     if (!result?.lhr) throw new Error("Lighthouse δεν επέστρεψε αποτελέσματα");
 
+    // The page itself failed to load (e.g. the site answered 403 to the headless browser)
+    if (result.lhr.runtimeError) {
+      console.error("[lighthouse] runtime error:", result.lhr.runtimeError);
+      return {
+        performance: 0, seo: 0, accessibility: 0, bestPractices: 0,
+        issues: [{
+          category: "Performance",
+          title: "Lighthouse could not load the page",
+          description: result.lhr.runtimeError.message,
+          severity: "error",
+        }],
+      };
+    }
+
     const { categories, audits } = result.lhr;
     const issues: LighthouseIssue[] = [];
 
