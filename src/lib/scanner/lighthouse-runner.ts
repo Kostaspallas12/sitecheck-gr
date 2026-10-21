@@ -1,4 +1,3 @@
-import puppeteer from "puppeteer";
 import lighthouse from "lighthouse";
 import { assertPublicDomain } from "@/lib/security/ssrf-guard";
 
@@ -17,15 +16,33 @@ export interface LighthouseIssue {
   severity: "error" | "warning" | "info";
 }
 
+// Vercel has no system Chrome: use the serverless Chromium build there, and puppeteer's bundled Chrome locally.
+async function launchBrowser() {
+  if (process.env.VERCEL) {
+    const [{ default: puppeteer }, { default: chromium }] = await Promise.all([
+      import("puppeteer-core"),
+      import("@sparticuz/chromium"),
+    ]);
+    return puppeteer.launch({
+      args: await puppeteer.defaultArgs({ args: chromium.args, headless: "shell" }),
+      executablePath: await chromium.executablePath(),
+      headless: "shell",
+    });
+  }
+
+  const { default: puppeteer } = await import("puppeteer");
+  return puppeteer.launch({
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
+  });
+}
+
 export async function runLighthouse(url: string): Promise<LighthouseScores> {
   await assertPublicDomain(new URL(url).hostname);
 
   let browser;
   try {
-    browser = await puppeteer.launch({
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
-    });
+    browser = await launchBrowser();
 
     const port = parseInt(new URL(browser.wsEndpoint()).port);
 

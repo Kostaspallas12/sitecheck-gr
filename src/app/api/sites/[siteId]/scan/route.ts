@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-import { findSiteById, findRunningScan, createScan, updateScan, createScanResult } from "@/lib/db";
-import { runFullScan } from "@/lib/scanner";
+import { NextRequest, NextResponse, after } from "next/server";
+import { findSiteById, findRunningScan, createScan } from "@/lib/db";
+import { runAndSaveScan } from "@/lib/scanner/run-and-save";
 import { checkRateLimit, getClientIP } from "@/lib/security/rate-limiter";
 import { getSessionUser } from "@/lib/auth-server";
 
@@ -42,26 +42,8 @@ export async function POST(
 
   const scan = await createScan(siteId);
 
-  runFullScan(`https://${site.domain}`)
-    .then(async (result) => {
-      await createScanResult({
-        scanId: scan.id,
-        performanceScore: result.scores.performance,
-        seoScore: result.scores.seo,
-        accessibilityScore: result.scores.accessibility,
-        bestPracticesScore: result.scores.bestPractices,
-        securityScore: result.scores.security,
-        lighthouseData: JSON.stringify(result.lighthouse),
-        securityHeaders: JSON.stringify(result.securityHeaders),
-        sslData: JSON.stringify(result.ssl),
-        issues: JSON.stringify(result.lighthouse.issues),
-        extendedAudit: JSON.stringify(result.extendedAudit),
-      });
-      await updateScan(scan.id, { status: "DONE", finishedAt: new Date() });
-    })
-    .catch(async () => {
-      await updateScan(scan.id, { status: "FAILED", finishedAt: new Date() });
-    });
+  // after() keeps the serverless function alive until the scan finishes (up to maxDuration)
+  after(() => runAndSaveScan(scan.id, site.domain));
 
   return NextResponse.json({ scanId: scan.id, status: "RUNNING" }, { status: 202 });
 }
