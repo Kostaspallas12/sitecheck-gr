@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth-server";
+import { adminAuth } from "@/lib/firebase";
 import { migrateUserEmail } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
@@ -10,6 +11,12 @@ export async function POST(req: NextRequest) {
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   if (!newEmail || newEmail === user.email || !EMAIL_RE.test(newEmail)) {
     return NextResponse.json({ error: "Invalid email" }, { status: 400 });
+  }
+
+  // Only migrate once Firebase Auth itself holds the new email — never trust the body alone
+  const authUser = await adminAuth.getUser(user.uid);
+  if (authUser.email?.toLowerCase() !== newEmail.toLowerCase()) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   await migrateUserEmail(user.email, newEmail);
