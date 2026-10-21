@@ -56,9 +56,34 @@ export async function runLighthouse(url: string): Promise<LighthouseScores> {
     if (!result?.lhr) throw new Error("Lighthouse δεν επέστρεψε αποτελέσματα");
 
     const { categories, audits } = result.lhr;
-    const score = (cat: string) => Math.round((categories[cat]?.score ?? 0) * 100);
-
     const issues: LighthouseIssue[] = [];
+
+    // Lighthouse nulls a category's score if any weighted audit errored (e.g. a metric the
+    // serverless Chromium couldn't measure). Fall back to the weighted mean of the audits that did run.
+    const score = (cat: string) => {
+      const category = categories[cat];
+      if (!category) return 0;
+      if (category.score !== null) return Math.round(category.score * 100);
+
+      let total = 0, weight = 0;
+      for (const ref of category.auditRefs) {
+        if (!ref.weight) continue;
+        const audit = audits[ref.id];
+        if (audit?.score == null) {
+          console.error(`[lighthouse] ${cat}/${ref.id} not measured:`, audit?.errorMessage);
+          issues.push({
+            category: category.title,
+            title: audit?.title ?? ref.id,
+            description: `Could not be measured: ${audit?.errorMessage ?? "unknown error"}`,
+            severity: "info",
+          });
+          continue;
+        }
+        total += audit.score * ref.weight;
+        weight += ref.weight;
+      }
+      return weight ? Math.round((total / weight) * 100) : 0;
+    };
 
     const pushIssues = (auditIds: string[], category: string) => {
       for (const id of auditIds) {
