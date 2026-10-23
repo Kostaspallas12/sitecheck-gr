@@ -35,9 +35,17 @@ export async function runFullScan(url: string): Promise<FullScanResult> {
   const hostname = new URL(url).hostname;
 
   const [lighthouse, securityHeaders, ssl, extendedAudit] = await Promise.all([
-    runLighthouse(url).catch((e) => {
+    runLighthouse(url).catch((e): Awaited<ReturnType<typeof runLighthouse>> => {
       console.error("[scan] lighthouse failed:", e);
-      return { performance: 0, seo: 0, accessibility: 0, bestPractices: 0, issues: [] as Awaited<ReturnType<typeof runLighthouse>>["issues"] };
+      return {
+        performance: 0, seo: 0, accessibility: 0, bestPractices: 0,
+        issues: [{
+          category: "Performance",
+          title: "Performance, SEO and accessibility analysis failed",
+          description: e instanceof Error ? e.message : String(e),
+          severity: "error",
+        }],
+      };
     }),
     checkSecurityHeaders(url).catch((e) => {
       console.error("[scan] security-headers failed:", e);
