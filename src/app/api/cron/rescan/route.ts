@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
 
   const sites = await getSitesForWeeklyRescan();
 
-  // One at a time: each scan launches its own Chromium, and they share this function's memory
+  // One at a time, to stay within PageSpeed Insights rate limits
   after(async () => {
     for (const site of sites) {
       try {

@@ -13,13 +13,14 @@ npm install
 npm run dev
 ```
 
-Locally, scans use puppeteer's bundled Chrome; on Vercel they use `@sparticuz/chromium`.
+Lighthouse scores come from the Google PageSpeed Insights API, so no browser runs in the app itself.
 
 ## Environment variables
 
 | Variable | Purpose |
 |---|---|
 | `FIREBASE_SERVICE_ACCOUNT` | Service account JSON for `firebase-admin` (required) |
+| `PAGESPEED_API_KEY` | Google PageSpeed Insights API key (required for Lighthouse scores) |
 | `BREVO_API_KEY`, `BREVO_SENDER_EMAIL` | Sending emails |
 | `CRON_SECRET` | Protects `/api/cron/rescan` and `/api/cron/uptime` (`x-cron-secret` header) |
 | `CLEANUP_SECRET` | Protects `/api/cleanup` (`Authorization: Bearer`) |

@@ -1,27 +1,7 @@
 import type { NextConfig } from "next";
 
-// Files the scanner loads at runtime that file tracing can't see: the Chromium binary,
-// and Lighthouse (audits found via readdir, report templates read from disk) plus the packages it reads.
-const scannerFiles = [
-  "./node_modules/@sparticuz/chromium/bin/**",
-  "./node_modules/lighthouse/**",
-  ...["axe-core", "csp_evaluator", "http-link-header", "jpeg-js", "robots-parser",
-    "speedline-core", "image-ssim", "chrome-launcher", "escape-string-regexp",
-    "is-wsl", "is-docker", "typed-query-selector", "js-library-detector"].map((p) => `./node_modules/${p}/**`),
-];
-
 const nextConfig: NextConfig = {
-  outputFileTracingIncludes: {
-    "/api/sites/*/scan": scannerFiles,
-    "/api/cron/rescan": scannerFiles,
-  },
-  serverExternalPackages: [
-    "lighthouse",
-    "puppeteer",
-    "puppeteer-core",
-    "@sparticuz/chromium",
-    "firebase-admin",
-  ],
+  serverExternalPackages: ["firebase-admin"],
   async headers() {
     return [
       {
