@@ -135,7 +135,8 @@ function detectTech(headers: Record<string, string>, html: string, setCookies: s
   if (/data-sveltekit|\/_app\/immutable\//.test(html)) add({ name: "SvelteKit", category: "framework" });
   else if (/class="[^"]*\bsvelte-[a-z0-9]{5,}/.test(html)) add({ name: "Svelte", category: "library" });
   if (/csrfmiddlewaretoken/i.test(html))             { add({ name: "Django", category: "framework" }); add({ name: "Python", category: "language" }); }
-  if (/data-turbo|turbolinks/i.test(html))           { add({ name: "Ruby on Rails", category: "framework" }); add({ name: "Ruby", category: "language" }); }
+  // Rails' csrf meta tag; data-turbo alone is Hotwire, which many non-Rails stacks use too
+  if (/<meta[^>]+name=["']csrf-param["'][^>]+content=["']authenticity_token["']/i.test(html)) { add({ name: "Ruby on Rails", category: "framework" }); add({ name: "Ruby", category: "language" }); }
   if (setCookies.some((c) => /^laravel_session=/i.test(c))) { add({ name: "Laravel", category: "framework" }); add({ name: "PHP", category: "language" }); }
 
   const jqVer = html.match(/jquery[.\-]([\d.]+)(?:\.min)?\.js/i)?.[1];
