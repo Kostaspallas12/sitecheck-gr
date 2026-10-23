@@ -58,12 +58,15 @@ export async function runLighthouse(url: string): Promise<LighthouseScores> {
   // The page itself failed to load (e.g. the site answered 403)
   if (lhr.runtimeError) {
     console.error("[lighthouse] runtime error:", lhr.runtimeError);
+    const status = lhr.runtimeError.message.match(/Status code: (\d+)/)?.[1];
     return {
       performance: 0, seo: 0, accessibility: 0, bestPractices: 0,
       issues: [{
         category: "Performance",
         title: "Lighthouse could not load the page",
-        description: lhr.runtimeError.message,
+        description: status
+          ? `Your site answered with HTTP ${status} instead of a normal page, so Performance, SEO, Accessibility and Best Practices could not be measured. Make sure the homepage is online and returns status 200 (not a maintenance page, login wall or bot block), then scan again.`
+          : `Performance, SEO, Accessibility and Best Practices could not be measured: ${lhr.runtimeError.message}`,
         severity: "error",
       }],
     };

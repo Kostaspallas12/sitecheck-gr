@@ -5,6 +5,25 @@ import { Suspense, useState, useEffect } from "react";
 import { useLang } from "@/components/LangProvider";
 import { getT } from "@/lib/i18n";
 
+async function loadSite(siteId: string): Promise<{ token: string; domain: string } | null> {
+  // Try sessionStorage first (normal flow from homepage)
+  try {
+    const stored = sessionStorage.getItem(`site:${siteId}`);
+    if (stored) {
+      const { token, domain } = JSON.parse(stored);
+      return { token, domain };
+    }
+  } catch { /* ignore */ }
+
+  // Fallback: fetch from API (e.g. when coming from dashboard)
+  try {
+    const data = await fetch(`/api/sites/${siteId}`).then((r) => r.json());
+    return data.verifyToken ? { token: data.verifyToken, domain: data.domain ?? "" } : null;
+  } catch {
+    return null;
+  }
+}
+
 function VerifyContent() {
   const params = useSearchParams();
   const router = useRouter();
@@ -14,37 +33,24 @@ function VerifyContent() {
   const siteId = params.get("siteId") ?? "";
   const [token, setToken] = useState("");
   const [domain, setDomain] = useState("");
-  const [ready, setReady] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const ready = !siteId || loaded;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [verified, setVerified] = useState(false);
 
   useEffect(() => {
-    if (!siteId) { setReady(true); return; }
-
-    // Try sessionStorage first (normal flow from homepage)
-    try {
-      const stored = sessionStorage.getItem(`site:${siteId}`);
-      if (stored) {
-        const { token: tk, domain: d } = JSON.parse(stored);
-        setToken(tk);
-        setDomain(d);
-        setReady(true);
-        return;
+    if (!siteId) return;
+    let cancelled = false;
+    loadSite(siteId).then((site) => {
+      if (cancelled) return;
+      if (site) {
+        setToken(site.token);
+        setDomain(site.domain);
       }
-    } catch { /* ignore */ }
-
-    // Fallback: fetch from API (e.g. when coming from dashboard)
-    fetch(`/api/sites/${siteId}`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.verifyToken) {
-          setToken(data.verifyToken);
-          setDomain(data.domain ?? "");
-        }
-      })
-      .catch(() => {})
-      .finally(() => setReady(true));
+      setLoaded(true);
+    });
+    return () => { cancelled = true; };
   }, [siteId]);
 
   async function handleVerify() {

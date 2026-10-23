@@ -70,7 +70,7 @@ function parseCookie(raw: string): CookieAuditItem {
   return { name, secure, httpOnly, sameSite, issues };
 }
 
-function detectTech(headers: Record<string, string>, html: string): TechItem[] {
+function detectTech(headers: Record<string, string>, html: string, setCookies: string[]): TechItem[] {
   const items: TechItem[] = [];
   const seen = new Set<string>();
   const add = (item: TechItem) => {
@@ -121,7 +121,8 @@ function detectTech(headers: Record<string, string>, html: string): TechItem[] {
   }
   if (/drupalSettings|drupal\.js/i.test(html))                      add({ name: "Drupal",    category: "cms" });
   if (/joomla/i.test(html) && /\/components\/com_/i.test(html))     add({ name: "Joomla",    category: "cms" });
-  if (/Mage\.|magento/i.test(html))                                  { add({ name: "Magento", category: "cms" }); add({ name: "PHP", category: "language" }); }
+  // Match Magento's own markup only — a loose /Mage\./i also hits every "image." in the page
+  if (/text\/x-magento-init|data-mage-init|\/static\/version\d+\/frontend\//.test(html)) { add({ name: "Magento", category: "cms" }); add({ name: "PHP", category: "language" }); }
   if (/cdn\.shopify\.com/i.test(html))                               add({ name: "Shopify",   category: "cms" });
 
   if (/__NEXT_DATA__|_next\/static\//i.test(html))  { add({ name: "Next.js", category: "framework" }); add({ name: "React", category: "library" }); }
@@ -130,18 +131,19 @@ function detectTech(headers: Record<string, string>, html: string): TechItem[] {
   if (/data-reactroot|react-dom/i.test(html))        add({ name: "React",    category: "library" });
   if (/vue\.min\.js|__vue_load_retry__/i.test(html)) add({ name: "Vue.js",   category: "library" });
   if (/___gatsby|gatsby-chunk/i.test(html))          { add({ name: "Gatsby", category: "framework" }); add({ name: "React", category: "library" }); }
-  if (/sveltekit|@sveltejs/i.test(html))             add({ name: "SvelteKit", category: "framework" });
-  else if (/svelte/i.test(html))                     add({ name: "Svelte",   category: "library" });
+  // The rules below look for files, attributes or cookies, not bare words that page text could contain
+  if (/data-sveltekit|\/_app\/immutable\//.test(html)) add({ name: "SvelteKit", category: "framework" });
+  else if (/class="[^"]*\bsvelte-[a-z0-9]{5,}/.test(html)) add({ name: "Svelte", category: "library" });
   if (/csrfmiddlewaretoken/i.test(html))             { add({ name: "Django", category: "framework" }); add({ name: "Python", category: "language" }); }
   if (/data-turbo|turbolinks/i.test(html))           { add({ name: "Ruby on Rails", category: "framework" }); add({ name: "Ruby", category: "language" }); }
-  if (/laravel/i.test(html))                         { add({ name: "Laravel", category: "framework" }); add({ name: "PHP", category: "language" }); }
+  if (setCookies.some((c) => /^laravel_session=/i.test(c))) { add({ name: "Laravel", category: "framework" }); add({ name: "PHP", category: "language" }); }
 
   const jqVer = html.match(/jquery[.\-]([\d.]+)(?:\.min)?\.js/i)?.[1];
   if (jqVer)                   add({ name: "jQuery",    category: "library", version: jqVer });
-  else if (/jquery/i.test(html)) add({ name: "jQuery",  category: "library" });
+  else if (/jquery(?:\.min)?\.js/i.test(html)) add({ name: "jQuery",  category: "library" });
 
   const bsVer = html.match(/bootstrap[.\-]([\d.]+)(?:\.min)?\.(?:js|css)/i)?.[1];
-  if (/bootstrap/i.test(html)) add({ name: "Bootstrap", category: "library", version: bsVer });
+  if (bsVer || /bootstrap(?:\.bundle)?(?:\.min)?\.(?:js|css)/i.test(html)) add({ name: "Bootstrap", category: "library", version: bsVer });
   if (/tailwindcss|tailwind\.min\.css/i.test(html)) add({ name: "Tailwind CSS", category: "library" });
 
   if (/gtag\.js|googletag|google-analytics\.com\/analytics/i.test(html)) add({ name: "Google Analytics",  category: "analytics" });
@@ -228,7 +230,7 @@ export async function runExtendedAudit(url: string): Promise<ExtendedAuditResult
   }
 
   // ── Parse everything ─────────────────────────────────────────────────────────
-  const technologies = detectTech(headers, html);
+  const technologies = detectTech(headers, html, rawSetCookie);
 
   const cookies = rawSetCookie
     .filter(Boolean)
