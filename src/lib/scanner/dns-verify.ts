@@ -1,5 +1,5 @@
 import dns from "dns/promises";
-import { assertPublicDomain } from "@/lib/security/ssrf-guard";
+import { assertPublicDomain, safeHttp } from "@/lib/security/ssrf-guard";
 
 export async function verifyDNSTxtRecord(
   domain: string,
@@ -24,8 +24,7 @@ export async function verifyMetaTag(
   try {
     const hostname = new URL(url).hostname;
     await assertPublicDomain(hostname);
-    const { default: axios } = await import("axios");
-    const res = await axios.get(url, {
+    const res = await safeHttp.get(url, {
       timeout: 10000,
       headers: { "User-Agent": "SiteAuditor/1.0" },
     });
@@ -44,9 +43,8 @@ export async function verifyFileUpload(
 ): Promise<{ verified: boolean; error?: string }> {
   try {
     await assertPublicDomain(domain);
-    const { default: axios } = await import("axios");
     const url = `https://${domain}/.well-known/site-verify-${token}.txt`;
-    const res = await axios.get(url, { timeout: 10000 });
+    const res = await safeHttp.get(url, { timeout: 10000 });
     const verified = String(res.data).trim() === token;
     return { verified };
   } catch (e: unknown) {

@@ -1,5 +1,4 @@
-import axios from "axios";
-import { assertPublicDomain } from "@/lib/security/ssrf-guard";
+import { assertPublicDomain, safeHttp } from "@/lib/security/ssrf-guard";
 
 export interface SecurityHeaderResult {
   header: string;
@@ -69,7 +68,7 @@ export async function checkSecurityHeaders(url: string): Promise<{
 
   try {
     await assertPublicDomain(new URL(url).hostname);
-    const res = await axios.get(url, {
+    const res = await safeHttp.get(url, {
       timeout: 10000,
       maxRedirects: 5,
       validateStatus: () => true,

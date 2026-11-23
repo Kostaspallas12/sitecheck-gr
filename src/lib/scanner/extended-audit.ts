@@ -1,5 +1,4 @@
-import axios from "axios";
-import { assertPublicDomain } from "@/lib/security/ssrf-guard";
+import { assertPublicDomain, safeHttp } from "@/lib/security/ssrf-guard";
 
 export interface TechItem {
   name: string;
@@ -206,7 +205,7 @@ export async function runExtendedAudit(url: string): Promise<ExtendedAuditResult
     // HTTP → HTTPS redirect check
     const httpUrl = origin.replace("https://", "http://");
     try {
-      const httpRes = await axios.get(httpUrl, {
+      const httpRes = await safeHttp.get(httpUrl, {
         timeout: 6000, maxRedirects: 0, validateStatus: () => true,
         headers: { "User-Agent": AGENT },
       });
@@ -214,7 +213,7 @@ export async function runExtendedAudit(url: string): Promise<ExtendedAuditResult
       redirectsToHttps = httpRes.status >= 300 && httpRes.status < 400 && loc.startsWith("https://");
     } catch { /* no redirect check */ }
 
-    const res = await axios.get(url, {
+    const res = await safeHttp.get(url, {
       timeout: 15000, maxRedirects: 5, validateStatus: () => true,
       headers: { "User-Agent": AGENT, "Accept-Encoding": "gzip, br, deflate", "Accept": "text/html" },
     });
@@ -266,7 +265,7 @@ export async function runExtendedAudit(url: string): Promise<ExtendedAuditResult
 
   // ── Parallel external checks ──────────────────────────────────────────────────
   const req = (path: string) =>
-    axios.get(`${origin}${path}`, {
+    safeHttp.get(`${origin}${path}`, {
       timeout: 5000, maxRedirects: 1, validateStatus: () => true,
       headers: { "User-Agent": AGENT },
     }).catch(() => null);

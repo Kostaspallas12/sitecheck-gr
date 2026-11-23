@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAllVerifiedSites, saveUptimeCheck, updateSiteUptimeStatus } from "@/lib/db";
+import { safeHttp } from "@/lib/security/ssrf-guard";
 
 export const maxDuration = 60;
 
@@ -67,15 +68,12 @@ export async function POST(req: NextRequest) {
       let statusCode: number | null = null;
 
       try {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 10_000);
-        const res = await fetch(`https://${site.domain}`, {
-          method: "HEAD",
-          signal: controller.signal,
+        // safeHttp: κάθε σύνδεση και κάθε redirect ελέγχεται ότι πάει σε δημόσια διεύθυνση (SSRF).
+        const res = await safeHttp.head(`https://${site.domain}`, {
+          timeout: 10_000,
           headers: { "User-Agent": "SiteCheck-Uptime/1.0" },
-          redirect: "follow",
+          validateStatus: () => true,
         });
-        clearTimeout(timer);
         statusCode = res.status;
         status = res.status < 400 ? "up" : "down";
       } catch {
